@@ -5,7 +5,6 @@ function render_person(p){
     person_html.attr('id', 'person_' + p.id);
     person_html.text(p.name);
     body.append(person_html);
-    // alert(person_html);
 }
 
 var data;
@@ -25,32 +24,21 @@ function hasOwnProperty(obj, prop) {
 }
 
 function render_tree(node, pos, scale){
-
-    
-
-    //alert(data);
     var person = nodeById(node);
-    //alert( person );
-    
-    //alert('render: '+person.name+' '+pos.left);
-
     $('#person_' + person.id).offset(pos);
     
     if(!person.hasOwnProperty('parents')){
-        //alert(person.name);
         return;
-        
     }
     
     var scale_drop = 0.5;
     var scale_upd = scale*scale_drop;
     
-    //alert('r1 '+person.name);
-    var p = {top: pos.top-100, left: pos.left-scale*1000};
-    render_tree(person.parents[0], p, scale_upd);
+    var p1 = {top: pos.top-100, left: pos.left-scale*1000};
+    var p2 = {top: pos.top-120, left: pos.left+scale*1000};
     
-    //alert('r2 '+person.name);
-    render_tree(person.parents[1], {top: pos.top-120, left: pos.left+scale*1000}, scale_upd);
+    render_tree(person.parents[0], p1, scale_upd);
+    render_tree(person.parents[1], p2, scale_upd);
     
 }
 
@@ -60,10 +48,6 @@ $.getJSON("data.json", function(json) {
     for(var i in json){
         var person = json[i];
         render_person(person);
-        //$('#person_' + person.id).offset(pos);
     }
     render_tree(1, pos, 1.);
-
-    // element = $('#ta_json');
-    // element.offset({top: 100, left: 200});
 });
