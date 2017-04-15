@@ -1,10 +1,15 @@
 function render_person(p){
     body = $(".container");
-    person_html = $('<h1></h1>');
+    person_html = $('<td></td>');
     person_html.attr('class', 'person');
-    person_html.attr('id', 'person_' + p.id);
     person_html.text(p.name);
-    body.append(person_html);
+    
+    table = $('<table></table>')
+    table.attr('border', 5);
+    table.attr('id', 'person_' + p.id);
+    
+    table.append($('<tr></tr>').append(person_html));
+    body.append(table);
 }
 
 var data;
