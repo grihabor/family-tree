@@ -2,6 +2,7 @@ function render_person(person, pos){
     var canvas = document.getElementById('family_tree');
     var ctx = canvas.getContext('2d');
     
+    ctx.textAlign = "center";
     ctx.fillText(person.name, pos.left, pos.top);
 }
 
@@ -9,6 +10,12 @@ function render_person(person, pos){
 var scale_drop = 0.5;
 var leave_shift = 300;
 var data;
+
+function get_data(json){
+    for(var i in json){
+        
+    }
+}
 
 function nodeById(id){
     for(var i in data){
