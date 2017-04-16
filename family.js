@@ -12,6 +12,22 @@ function render_person(p){
     body.append(table);
 }
 
+function render(person, pos){
+    var canvas = document.getElementById('family_tree');
+    
+    if(!canvas.getContext){
+        // alert('context unsupported');
+    }
+    
+    var ctx = canvas.getContext('2d');
+    //alert(ctx);
+    
+    ctx.fillText(person.name, pos.left, pos.top);
+}
+
+ 
+var scale_drop = 0.5;
+var leave_shift = 500;
 var data;
 
 function nodeById(id){
@@ -22,25 +38,19 @@ function nodeById(id){
     }
 }
 
-function hasOwnProperty(obj, prop) {
-    var proto = obj.__proto__ || obj.constructor.prototype;
-    return (prop in obj) &&
-        (!(prop in proto) || proto[prop] !== obj[prop]);
-}
-
 function render_tree(node, pos, scale){
     var person = nodeById(node);
-    $('#person_' + person.id).offset(pos);
+    // $('#person_' + person.id).offset(pos);
+    render(person, pos);
     
     if(!person.hasOwnProperty('parents')){
         return;
     }
-    
-    var scale_drop = 0.5;
+   
     var scale_upd = scale*scale_drop;
     
-    var p1 = {top: pos.top-100, left: pos.left-scale*1000};
-    var p2 = {top: pos.top-120, left: pos.left+scale*1000};
+    var p1 = {top: pos.top-100, left: pos.left-scale*leave_shift};
+    var p2 = {top: pos.top-120, left: pos.left+scale*leave_shift};
     
     render_tree(person.parents[0], p1, scale_upd);
     render_tree(person.parents[1], p2, scale_upd);
@@ -49,10 +59,10 @@ function render_tree(node, pos, scale){
 
 $.getJSON("data.json", function(json) {
     data = json;
-    var pos = {top: 1500, left: 2500};
+    var pos = {top: 500, left: 1500};
     for(var i in json){
         var person = json[i];
-        render_person(person);
+        // render_person(person);
     }
     render_tree(1, pos, 1.);
 });
