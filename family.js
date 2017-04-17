@@ -25,21 +25,21 @@ function render_person(person, pos){
         height: parseInt(ctx.font)
     };
     
-    alert(surname_size.width + " " + surname_size.height);
+    //alert(surname_size.width + " " + surname_size.height);
     
     surname_pos = {
         left: pos.left - surname_size.width/2,
         top: pos.top - surname_size.height - text_padding/2
     };
     
-    alert(surname_pos.left + " " + surname_pos.top);
+    //alert(surname_pos.left + " " + surname_pos.top);
     
     name_pos = {
         left: pos.left - name_size.width/2,
         top: pos.top + text_padding/2
     };
     
-    alert(name_pos.left + " " + name_pos.top);
+    //alert(name_pos.left + " " + name_pos.top);
     
     rect = {
         left: Math.min(name_pos.left, surname_pos.left),
@@ -51,8 +51,8 @@ function render_person(person, pos){
     ctx.rect(
         rect.left - rect_padding,
         rect.top - rect_padding,
-        rect.width + rect_padding,
-        rect.height + rect_padding
+        rect.width + 2*rect_padding,
+        rect.height + 2*rect_padding
     );
     ctx.stroke();
     
