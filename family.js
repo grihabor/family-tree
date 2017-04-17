@@ -9,45 +9,38 @@ var couples = {};
 
 
 function render_person(person, pos){
-    // alert(); 
     var canvas = document.getElementById('family_tree');
     var ctx = canvas.getContext('2d');
     
-    //ctx.textAlign = "center";
     ctx.font = "30px Arial";
-    //alert(parseInt(ct);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+
     name_size = {
         width: ctx.measureText(person.name).width,
         height: parseInt(ctx.font)
     };
-    // alert(name_size.width);
     surname_size = { 
         width: ctx.measureText(person.surname).width,
         height: parseInt(ctx.font)
     };
     
-    //alert(surname_size.width + " " + surname_size.height);
-    
     surname_pos = {
         left: pos.left - surname_size.width/2,
         top: pos.top - surname_size.height - text_padding/2
     };
-    
-    //alert(surname_pos.left + " " + surname_pos.top);
-    
     name_pos = {
         left: pos.left - name_size.width/2,
         top: pos.top + text_padding/2
     };
     
-    //alert(name_pos.left + " " + name_pos.top);
-    
     rect = {
         left: Math.min(name_pos.left, surname_pos.left),
-        top: surname_pos.top - surname_size.height/1.5,
+        top: surname_pos.top,
         width: Math.max(name_size.width, surname_size.width),
         height: name_size.height + surname_size.height + text_padding
     }
+    
     
     ctx.rect(
         rect.left - rect_padding,
@@ -72,15 +65,10 @@ function nodeById(id){
 function add_couple_child(child){
 
     parents = child.parents;
-    //alert('');
     couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
-    //alert(couple_id);
     if(couple_id in couples){
-       //alert();
        children = couples[couple_id].children;
-       //alert(children);
        children.push(child.id);
-       //alert();
     } else {
        couples[couple_id] = {children: [child.id]};
     }
@@ -90,19 +78,13 @@ function add_couple_child(child){
 }
 
 function calc_data(){
-    //alert();
     for(var i in data){
-   // alert(i);
         person = data[i];
-        //alert(person.name);
         if(!person.hasOwnProperty('parents')){
             continue;
         }
-        //alert('');
         add_couple_child(person);    
-        //alert(couples);
     }
-    alert('Done');
 }
 
 function render_tree(node, pos, scale){
