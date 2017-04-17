@@ -62,6 +62,14 @@ function nodeById(id){
     }
 }
 
+function coupleById(id){
+    for(var i in couples){
+        if(couples[i].id == id){
+            return couples[i];
+        }
+    }	
+}
+
 function add_couple_child(child){
 
     parents = child.parents;
@@ -103,6 +111,13 @@ function render_tree(node, pos, scale){
     render_tree(person.parents[0], p1, scale_upd);
     render_tree(person.parents[1], p2, scale_upd);
     
+}
+
+function calc_positions(node, pos){
+	var person = nodeById(node);
+	person.pos = pos;
+
+	couple = coupleById(person.couple_id);
 }
 
 $.getJSON("data.json", function(json) {
