@@ -69,7 +69,9 @@ function nodeById(id){
     }
 }
 
-function add_couple_child(parents, child){
+function add_couple_child(child){
+
+    parents = child.parents;
     //alert('');
     couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
     //alert(couple_id);
@@ -82,8 +84,9 @@ function add_couple_child(parents, child){
     } else {
        couples[couple_id] = {children: [child.id]};
     }
-    child.couple_id = couple_id;
-    
+    child.parent_couple_id = couple_id;
+    nodeById(parents[0]).couple_id = couple_id;
+    nodeById(parents[1]).couple_id = couple_id;
 }
 
 function calc_data(){
@@ -96,7 +99,7 @@ function calc_data(){
             continue;
         }
         //alert('');
-        couple = add_couple_child(person.parents, person);    
+        add_couple_child(person);    
         //alert(couples);
     }
     alert('Done');
