@@ -5,6 +5,7 @@ var leaves_pad_height = 100;
 var text_padding = 0;
 var rect_padding = 10;
 var data;
+var couples = {};
 
 
 function render_person(person, pos){
@@ -60,18 +61,45 @@ function render_person(person, pos){
     ctx.fillText(person.surname, surname_pos.left, surname_pos.top);
 }
 
-function get_data(json){
-    for(var i in json){
-        
-    }
-}
-
 function nodeById(id){
     for(var i in data){
         if(data[i].id == id){
             return data[i];
         }
     }
+}
+
+function add_couple_child(parents, child){
+    //alert('');
+    couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
+    //alert(couple_id);
+    if(couple_id in couples){
+       //alert();
+       children = couples[couple_id].children;
+       //alert(children);
+       children.push(child.id);
+       //alert();
+    } else {
+       couples[couple_id] = {children: [child.id]};
+    }
+    child.couple_id = couple_id;
+    
+}
+
+function calc_data(){
+    //alert();
+    for(var i in data){
+   // alert(i);
+        person = data[i];
+        //alert(person.name);
+        if(!person.hasOwnProperty('parents')){
+            continue;
+        }
+        //alert('');
+        couple = add_couple_child(person.parents, person);    
+        //alert(couples);
+    }
+    alert('Done');
 }
 
 function render_tree(node, pos, scale){
@@ -94,7 +122,8 @@ function render_tree(node, pos, scale){
 
 $.getJSON("data.json", function(json) {
     data = json;
-    // alert(data);
+    calc_data();
+    
     var pos = {top: 1000, left: 2500};
     render_tree(30, pos, 1.);
 });
