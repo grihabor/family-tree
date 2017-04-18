@@ -10,20 +10,11 @@ var couples = {};
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
     
-var pos = {top: 300, left: 300};
+var pos = {top: 600, left: 2000};
 
-function resizeCanvas(ctx){
-    if (ctx.canvas.width == window.innerWidth && ctx.canvas.height == window.innerHeight){
-        return;
-    }
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
-    //alert(canvas.width +" "+ canvas.height);
-}
 
 function render_person(person, pos){
     
-    resizeCanvas(ctx);
     
     ctx.font = "30px Arial";
     ctx.textAlign = 'left';
@@ -133,47 +124,8 @@ function calc_positions(node, pos){
 	couple = coupleById(person.couple_id);
 }
 
-function handleStart(){
-    //alert();
-}
-function handleEnd(){}
-function handleCancel(){}
-function handleMove(){
-   ctx.clearRect(
-       0, 0, canvas.width, canvas.height
-   );
-   
-   //pos.left += 1;
-   
-   render_tree(30, pos, 1.);
-}
-
-
 function run(){
 
-    //resizeCanvas();
-    
-    canvas.addEventListener(
-        "touchstart", 
-        handleStart, 
-        false
-    );
-    canvas.addEventListener(
-        "touchend", 
-        handleEnd, 
-        false
-    );
-    canvas.addEventListener(
-        "touchcancel", 
-        handleCancel, 
-        false
-    );
-    canvas.addEventListener(
-        "touchmove", 
-        handleMove, 
-        false
-    );
-    
     $.getJSON("data.json", function(json) {
         data = json;
         calc_data();
