@@ -7,9 +7,10 @@ var rect_padding = 10;
 var data;
 var couples = {};
 
+var canvas = document.getElementById('family_tree');
 
 function render_person(person, pos){
-    var canvas = document.getElementById('family_tree');
+    
     var ctx = canvas.getContext('2d');
     
     ctx.font = "30px Arial";
@@ -120,10 +121,45 @@ function calc_positions(node, pos){
 	couple = coupleById(person.couple_id);
 }
 
-$.getJSON("data.json", function(json) {
-    data = json;
-    calc_data();
+function handleStart(){
+    //alert();
+}
+function handleEnd(){}
+function handleCancel(){}
+function handleMove(){
+   // alert();
+}
+
+function run(){
+    /*
+    canvas.addEventListener(
+        "touchstart", 
+        handleStart, 
+        false
+    );
+    canvas.addEventListener(
+        "touchend", 
+        handleEnd, 
+        false
+    );
+    canvas.addEventListener(
+        "touchcancel", 
+        handleCancel, 
+        false
+    );
+    canvas.addEventListener(
+        "touchmove", 
+        handleMove, 
+        false
+    );
+    */
+    $.getJSON("data.json", function(json) {
+        data = json;
+        calc_data();
     
-    var pos = {top: 1000, left: 2500};
-    render_tree(30, pos, 1.);
-});
+        var pos = {top: 1000, left: 2500};
+        render_tree(30, pos, 1.);
+    });
+}
+
+run();
