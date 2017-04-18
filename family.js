@@ -8,10 +8,22 @@ var data;
 var couples = {};
 
 var canvas = document.getElementById('family_tree');
+var ctx = canvas.getContext('2d');
+    
+var pos = {top: 300, left: 300};
+
+function resizeCanvas(ctx){
+    if (ctx.canvas.width == window.innerWidth && ctx.canvas.height == window.innerHeight){
+        return;
+    }
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
+    //alert(canvas.width +" "+ canvas.height);
+}
 
 function render_person(person, pos){
     
-    var ctx = canvas.getContext('2d');
+    resizeCanvas(ctx);
     
     ctx.font = "30px Arial";
     ctx.textAlign = 'left';
@@ -127,11 +139,20 @@ function handleStart(){
 function handleEnd(){}
 function handleCancel(){}
 function handleMove(){
-   // alert();
+   ctx.clearRect(
+       0, 0, canvas.width, canvas.height
+   );
+   
+   //pos.left += 1;
+   
+   render_tree(30, pos, 1.);
 }
 
+
 function run(){
-    /*
+
+    //resizeCanvas();
+    
     canvas.addEventListener(
         "touchstart", 
         handleStart, 
@@ -152,12 +173,11 @@ function run(){
         handleMove, 
         false
     );
-    */
+    
     $.getJSON("data.json", function(json) {
         data = json;
         calc_data();
     
-        var pos = {top: 1000, left: 2500};
         render_tree(30, pos, 1.);
     });
 }
