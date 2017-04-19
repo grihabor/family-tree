@@ -8,6 +8,7 @@ var data;
 var couples = {};
 
 var subtree_space = rect_padding*2 + 10;
+var row_space = 120;
 
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
@@ -107,7 +108,7 @@ function calc_data(){
     }
 }
 
-function render_tree(node, pos, scale){
+function _depr_render_tree(node, pos, scale){
     var person = nodeById(node);
     render_person(person, pos);
     
@@ -120,8 +121,8 @@ function render_tree(node, pos, scale){
     var p1 = {top: pos.top-leaves_pad_height, left: pos.left-scale*leaves_pad_width};
     var p2 = {top: pos.top-leaves_pad_height, left: pos.left+scale*leaves_pad_width};
     
-    render_tree(person.parents[0], p1, scale_upd);
-    render_tree(person.parents[1], p2, scale_upd);
+    _depr_render_tree(person.parents[0], p1, scale_upd);
+    _depr_render_tree(person.parents[1], p2, scale_upd);
     
 }
 
@@ -222,7 +223,7 @@ function render(node, pos){
         var child = nodeById(couple.children[i]);
         //alert(child.name+child.pos)
         
-        render(couple.children[i], {x:child.pos+pos.x, y:pos.y+150});
+        render(couple.children[i], {x:child.pos+pos.x, y:pos.y+row_space});
     }
     }
 }
