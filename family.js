@@ -155,22 +155,9 @@ function get_person_rect(person){
     };
 }
 
-function calc_positions(node){
-    //alert(node);
-
-    var person = nodeById(node);
-    if('pos' in person){
-	       return;
-	   }
-    
-	   //person.pos = pos;
-	   
-	   //alert();
-	   
-	   
-    if('couple_id' in person){
-	       var couple = couples[person.couple_id];
-	       alert(person.couple_id + " " + person.name + " "+couple.children);
+function calc_couple(couple_id){
+var couple = couples[couple_id];
+	       alert(couple_id + " " + " "+couple.children);
 	       
 	       var subtree_width = [];
 	       var cur_x = 0;
@@ -198,7 +185,24 @@ function calc_positions(node){
 	           
 	       //alert(person.name + person.couple_id);
 	       alert('tree width '+tree_width);
-	       
+	       return tree_width;
+}
+
+function calc_positions(node){
+    //alert(node);
+
+    var person = nodeById(node);
+    if('pos' in person){
+	       return;
+	   }
+    
+	   //person.pos = pos;
+	   
+	   //alert();
+	   
+	   
+    if('couple_id' in person){
+	       var tree_width = calc_couple(person.couple_id);
 	       
 	       return Math.max(tree_width, get_person_rect(person).width);
 	   } else {
