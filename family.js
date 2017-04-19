@@ -7,18 +7,21 @@ var rect_padding = 10;
 var data;
 var couples = {};
 
+var subtree_space = rect_padding*2 + 10;
+
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
-    
+ctx.font = "30px Arial";
+ctx.textAlign = 'left';
+ctx.textBaseline = 'top';
+
 var pos = {top: 600, left: 2000};
 
 
 function render_person(person, pos){
+    if('x' in pos){
+    pos = {left:pos.x, top:pos.y};}
     
-    
-    ctx.font = "30px Arial";
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
 
     name_size = {
         width: ctx.measureText(person.name).width,
@@ -120,7 +123,7 @@ function render_tree(node, pos, scale){
     
 }
 
-function calc_positions(node, pos){
+function calc_positions(node){
     //alert(node);
 
     var person = nodeById(node);
@@ -130,29 +133,62 @@ function calc_positions(node, pos){
     
 	   //person.pos = pos;
 	   
-	   alert();
+	   //alert();
 	   
 	   
     if('couple_id' in person){
-	       couple = couples[person.couple_id];
-	       alert(person.couple_id + "" + couple);
-	       // calculate subtree
+	       var couple = couples[person.couple_id];
+	       alert(person.couple_id + " " + person.name);
+	       
+	       var subtree_width = [];
+	       var cur_x = 0;
+	       /* calculate subtree */
 	       for(var i in couple.children){
-	           alert('child '+i);
-	           subtree_width = calc_positions(
+	           //alert('child '+i);
+	           w = calc_positions(
 	               couple.children[i],
 	               {x:pos.x+i, y:pos.y+1}
-	           );
-	       }
+	           )
 	           
-	       alert(person.name + person.couple_id);
+	           subtree_width.push(w);
+	           child = nodeById(couple.children[i]);
+	           child.pos = cur_x + w/2;
+	           alert(child.name+": "+child.pos);
+	           cur_x += w + subtree_space;
+	       }
 	       
+	       tree_width = cur_x - subtree_space;
+	           
+	       //alert(person.name + person.couple_id);
+	       alert('tree width '+tree_width);
+	       
+	       
+	       return tree_width;
 	   } else {
-	       alert(person.name);
+	       //alert(person.name);
+	       /* Handle leaves */
+	       // person.pos = pos;
+	       return ctx.measureText(person.name).width;
 	   }
 	   
 	   
 
+}
+
+function render(node, pos){
+    var person = nodeById(node);
+    render_person(person, pos);
+    //alert(person+""+ pos.x);
+    
+    if('couple_id' in person){
+	       couple = couples[person.couple_id];
+    for(var i in couple.children){
+        child = nodeById(couple.children[i]);
+        alert(child.name+child.pos)
+        
+        render(couple.children[i], {x:child.pos+pos.x, y:pos.y+150});
+    }
+    }
 }
 
 function run(){
@@ -161,9 +197,10 @@ function run(){
         data = json;
         calc_data();
         
-        calc_positions(29, {x:0,y:0});
+        calc_positions(29);
+        render(29, {x:500, y:500});
     
-        render_tree(30, pos, 1.);
+        //render_tree(30, pos, 1.);
     });
 }
 
