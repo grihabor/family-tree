@@ -93,6 +93,8 @@ function add_couple_child(child){
     child.parent_couple_id = couple_id;
     nodeById(parents[0]).couple_id = couple_id;
     nodeById(parents[1]).couple_id = couple_id;
+    
+    //alert(couple_id+" "+couples[couple_id].children);
 }
 
 function calc_data(){
@@ -138,7 +140,7 @@ function calc_positions(node){
 	   
     if('couple_id' in person){
 	       var couple = couples[person.couple_id];
-	       alert(person.couple_id + " " + person.name);
+	       alert(person.couple_id + " " + person.name + " "+couple.children);
 	       
 	       var subtree_width = [];
 	       var cur_x = 0;
@@ -157,7 +159,7 @@ function calc_positions(node){
 	           cur_x += w + subtree_space;
 	       }
 	       
-	       tree_width = cur_x - subtree_space;
+	       var tree_width = cur_x - subtree_space;
 	           
 	       //alert(person.name + person.couple_id);
 	       alert('tree width '+tree_width);
@@ -181,10 +183,10 @@ function render(node, pos){
     //alert(person+""+ pos.x);
     
     if('couple_id' in person){
-	       couple = couples[person.couple_id];
+	       var couple = couples[person.couple_id];
     for(var i in couple.children){
-        child = nodeById(couple.children[i]);
-        alert(child.name+child.pos)
+        var child = nodeById(couple.children[i]);
+        //alert(child.name+child.pos)
         
         render(couple.children[i], {x:child.pos+pos.x, y:pos.y+150});
     }
@@ -197,8 +199,10 @@ function run(){
         data = json;
         calc_data();
         
-        calc_positions(29);
-        render(29, {x:500, y:500});
+        node=8;
+        
+        calc_positions(node);
+        render(node, {x:500, y:500});
     
         //render_tree(30, pos, 1.);
     });
