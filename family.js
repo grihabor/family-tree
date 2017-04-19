@@ -173,13 +173,14 @@ var couple = couples[couple_id];
 	           
 	           //subtree_width.push(w);
 	           var child = nodeById(couple.children[i]);
+	           
 	           child.pos = cur_x + w/2;
-	           alert(child.name+ ": " +w);
+	           //alert(child.name+ ": " +w);
 	           cur_x += w + subtree_space;
 	       }
 	       
 	       var tree_width = cur_x - subtree_space;
-	       alert('total: '+tree_width);
+	       //alert('total: '+tree_width);
 	       
 	       for(var i in couple.children){
             var child = nodeById(couple.children[i]);
@@ -209,15 +210,15 @@ function calc_positions(node){
     if('couple_id' in person){
         var couple_offset;
         if(person.sex == 'male'){
-            couple_offset = rect_width/2;
+            person.shift = - rect_width/2;
         } else {
-            couple_offset = - rect_width/2;
+            person.shift = rect_width/2;
         }
-        alert(couple_offset);
+        //alert(couple_offset);
     
     var couple = couples[person.couple_id];
-    couple.pos = couple_offset;
-    alert(person.couple_id+" "+couple.person+" "+couple.pos);
+    //couple.pos = couple_offset;
+    //alert(person.couple_id+" "+couple.person);
 	       var tree_width = calc_couple(person.couple_id);
 	       
 	       
@@ -234,7 +235,7 @@ function calc_positions(node){
 	       
 	       var couple_width = couple_space + w1 + w2;
 	       
-	       alert(w1 +" + "+w2 + " " + couple_width +" "+ tree_width);
+	       //alert(w1 +" + "+w2 + " " + couple_width +" "+ tree_width);
 	       return Math.max(tree_width, couple_width);
 	   } else {
 	       return rect_width;
@@ -246,17 +247,43 @@ function calc_positions(node){
 
 function render(node, pos){
     var person = nodeById(node);
-    render_person(person, pos);
+    
     //alert(person+""+ pos.x);
     
     if('couple_id' in person){
 	       var couple = couples[person.couple_id];
+	       
+	       var p1 = nodeById(couple.person[0]);
+	       var p2 = nodeById(couple.person[1]);
+	       
+	       shift1 = get_person_rect(p1).width/2;
+	       shift2 = get_person_rect(p2).width/2;
+	       
+	       if(p1.sex == "male"){
+	           shift1 = -shift1;
+	       } else {
+	           shift2 = -shift2;
+	       }
+	       
+	       render_person(p1, {
+	           x:pos.x + shift1,
+	           y:pos.y
+	       });
+	       render_person(p2, {
+	           x:pos.x+ shift2,
+	           y:pos.y
+	       });
+	       
+	       
+	       
     for(var i in couple.children){
         var child = nodeById(couple.children[i]);
         //alert(child.name+child.pos)
-        alert(couple.pos);
+        //alert(couple.pos);
         render(couple.children[i], {x:child.pos+pos.x, y:pos.y+row_space});
     }
+    } else {
+        render_person(person, pos);
     }
 }
 
