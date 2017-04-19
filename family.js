@@ -176,6 +176,17 @@ var couple = couples[couple_id];
 	           
 	           child.pos = cur_x + w/2;
 	           //alert(child.name+ ": " +w);
+	           
+	          
+        if('couple_id' in child){
+            var wi = get_person_rect(child).width/2;
+            if(child.sex == 'male'){
+            child.pos += wi;
+            }else{
+            child.pos -= wi;
+            }
+        }
+	           
 	           cur_x += w + subtree_space;
 	       }
 	       
@@ -274,7 +285,17 @@ function render(node, pos){
         var child = nodeById(couple.children[i]);
         //alert(child.name+child.pos)
         //alert(couple.pos);
-        render(couple.children[i], {x:child.pos+pos.x, y:pos.y+row_space});
+        
+        var child_pos = child.pos+pos.x;
+        if('couple_id' in child){
+            var w = get_person_rect(child).width/2;
+            if(child.sex == 'male'){
+            child_pos += w;
+            }else{
+            child_pos -= w;
+            }
+        }
+        render(couple.children[i], {x:child_pos, y:pos.y+row_space});
     }
     } 
         
