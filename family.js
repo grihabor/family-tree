@@ -66,6 +66,8 @@ function nodeById(id){
     }
 }
 
+/*
+
 function coupleById(id){
     for(var i in couples){
         if(couples[i].id == id){
@@ -73,6 +75,7 @@ function coupleById(id){
         }
     }	
 }
+*/
 
 function add_couple_child(child){
 
@@ -118,10 +121,38 @@ function render_tree(node, pos, scale){
 }
 
 function calc_positions(node, pos){
-	var person = nodeById(node);
-	person.pos = pos;
+    //alert(node);
 
-	couple = coupleById(person.couple_id);
+    var person = nodeById(node);
+    if('pos' in person){
+	       return;
+	   }
+    
+	   //person.pos = pos;
+	   
+	   alert();
+	   
+	   
+    if('couple_id' in person){
+	       couple = couples[person.couple_id];
+	       alert(person.couple_id + "" + couple);
+	       // calculate subtree
+	       for(var i in couple.children){
+	           alert('child '+i);
+	           subtree_width = calc_positions(
+	               couple.children[i],
+	               {x:pos.x+i, y:pos.y+1}
+	           );
+	       }
+	           
+	       alert(person.name + person.couple_id);
+	       
+	   } else {
+	       alert(person.name);
+	   }
+	   
+	   
+
 }
 
 function run(){
@@ -129,6 +160,8 @@ function run(){
     $.getJSON("data.json", function(json) {
         data = json;
         calc_data();
+        
+        calc_positions(29, {x:0,y:0});
     
         render_tree(30, pos, 1.);
     });
