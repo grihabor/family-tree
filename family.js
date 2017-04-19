@@ -125,6 +125,35 @@ function render_tree(node, pos, scale){
     
 }
 
+function get_person_rect(person){
+
+
+    name_size = {
+        width: ctx.measureText(person.name).width,
+        height: parseInt(ctx.font)
+    };
+    surname_size = { 
+        width: ctx.measureText(person.surname).width,
+        height: parseInt(ctx.font)
+    };
+    
+    surname_pos = {
+        left: pos.left - surname_size.width/2,
+        top: pos.top - surname_size.height - text_padding/2
+    };
+    name_pos = {
+        left: pos.left - name_size.width/2,
+        top: pos.top + text_padding/2
+    };
+    
+    return {
+        left: Math.min(name_pos.left, surname_pos.left),
+        top: surname_pos.top,
+        width: Math.max(name_size.width, surname_size.width),
+        height: name_size.height + surname_size.height + text_padding
+    };
+}
+
 function calc_positions(node){
     //alert(node);
 
@@ -160,17 +189,22 @@ function calc_positions(node){
 	       }
 	       
 	       var tree_width = cur_x - subtree_space;
+	       
+	       for(var i in couple.children){
+            var child = nodeById(couple.children[i]);
+            child.pos -= tree_width/2;
+        }
 	           
 	       //alert(person.name + person.couple_id);
 	       alert('tree width '+tree_width);
 	       
 	       
-	       return tree_width;
+	       return Math.max(tree_width, get_person_rect(person).width);
 	   } else {
 	       //alert(person.name);
 	       /* Handle leaves */
 	       // person.pos = pos;
-	       return ctx.measureText(person.name).width;
+	       return get_person_rect(person).width;
 	   }
 	   
 	   
@@ -202,7 +236,7 @@ function run(){
         node=8;
         
         calc_positions(node);
-        render(node, {x:500, y:500});
+        render(node, {x:800, y:500});
     
         //render_tree(30, pos, 1.);
     });
