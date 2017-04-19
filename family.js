@@ -9,6 +9,7 @@ var couples = {};
 
 var subtree_space = rect_padding*2 + 10;
 var row_space = 120;
+var couple_space = 20;
 
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
@@ -89,11 +90,12 @@ function add_couple_child(child){
        children = couples[couple_id].children;
        children.push(child.id);
     } else {
-       couples[couple_id] = {children: [child.id]};
+       couples[couple_id] = {children: [child.id], person:parents};
+       nodeById(parents[0]).couple_id = couple_id;
+       nodeById(parents[1]).couple_id = couple_id;
     }
     child.parent_couple_id = couple_id;
-    nodeById(parents[0]).couple_id = couple_id;
-    nodeById(parents[1]).couple_id = couple_id;
+    
     
     //alert(couple_id+" "+couples[couple_id].children);
 }
@@ -157,26 +159,27 @@ function get_person_rect(person){
 
 function calc_couple(couple_id){
 var couple = couples[couple_id];
-	       alert(couple_id + " " + " "+couple.children);
+	       //alert(couple_id + " " + " "+couple.children);
 	       
-	       var subtree_width = [];
+	       //var subtree_width = [];
 	       var cur_x = 0;
 	       /* calculate subtree */
 	       for(var i in couple.children){
 	           //alert('child '+i);
-	           w = calc_positions(
+	           var w = calc_positions(
 	               couple.children[i],
 	               {x:pos.x+i, y:pos.y+1}
 	           )
 	           
-	           subtree_width.push(w);
-	           child = nodeById(couple.children[i]);
+	           //subtree_width.push(w);
+	           var child = nodeById(couple.children[i]);
 	           child.pos = cur_x + w/2;
-	           alert(child.name+": "+child.pos);
+	           alert(child.name+ ": " +w);
 	           cur_x += w + subtree_space;
 	       }
 	       
 	       var tree_width = cur_x - subtree_space;
+	       alert('total: '+tree_width);
 	       
 	       for(var i in couple.children){
             var child = nodeById(couple.children[i]);
@@ -184,7 +187,7 @@ var couple = couples[couple_id];
         }
 	           
 	       //alert(person.name + person.couple_id);
-	       alert('tree width '+tree_width);
+	       //alert('tree width '+tree_width);
 	       return tree_width;
 }
 
@@ -200,16 +203,41 @@ function calc_positions(node){
 	   
 	   //alert();
 	   
+	   var rect_width = get_person_rect(person).width;
+	   
 	   
     if('couple_id' in person){
+        var couple_offset;
+        if(person.sex == 'male'){
+            couple_offset = rect_width/2;
+        } else {
+            couple_offset = - rect_width/2;
+        }
+        alert(couple_offset);
+    
+    var couple = couples[person.couple_id];
+    couple.pos = couple_offset;
+    alert(person.couple_id+" "+couple.person+" "+couple.pos);
 	       var tree_width = calc_couple(person.couple_id);
 	       
-	       return Math.max(tree_width, get_person_rect(person).width);
+	       
+	       
+	       
+	       var w1 = get_person_rect(
+	           nodeById(
+	               couple.person[0])
+	       ).width;
+	       var w2 = get_person_rect(
+	           nodeById(
+	               couple.person[1])
+	       ).width;
+	       
+	       var couple_width = couple_space + w1 + w2;
+	       
+	       alert(w1 +" + "+w2 + " " + couple_width +" "+ tree_width);
+	       return Math.max(tree_width, couple_width);
 	   } else {
-	       //alert(person.name);
-	       /* Handle leaves */
-	       // person.pos = pos;
-	       return get_person_rect(person).width;
+	       return rect_width;
 	   }
 	   
 	   
@@ -226,7 +254,7 @@ function render(node, pos){
     for(var i in couple.children){
         var child = nodeById(couple.children[i]);
         //alert(child.name+child.pos)
-        
+        alert(couple.pos);
         render(couple.children[i], {x:child.pos+pos.x, y:pos.y+row_space});
     }
     }
