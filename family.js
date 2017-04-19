@@ -247,33 +247,27 @@ function calc_positions(node){
 
 function render(node, pos){
     var person = nodeById(node);
+    render_person(person, pos);
     
     //alert(person+""+ pos.x);
     
     if('couple_id' in person){
 	       var couple = couples[person.couple_id];
-	       
+	       /*
 	       var p1 = nodeById(couple.person[0]);
 	       var p2 = nodeById(couple.person[1]);
 	       
-	       shift1 = get_person_rect(p1).width/2;
-	       shift2 = get_person_rect(p2).width/2;
 	       
-	       if(p1.sex == "male"){
-	           shift1 = -shift1;
-	       } else {
-	           shift2 = -shift2;
-	       }
 	       
 	       render_person(p1, {
-	           x:pos.x + shift1,
+	           x:pos.x,
 	           y:pos.y
 	       });
 	       render_person(p2, {
 	           x:pos.x+ shift2,
 	           y:pos.y
 	       });
-	       
+	       */
 	       
 	       
     for(var i in couple.children){
@@ -282,9 +276,8 @@ function render(node, pos){
         //alert(couple.pos);
         render(couple.children[i], {x:child.pos+pos.x, y:pos.y+row_space});
     }
-    } else {
-        render_person(person, pos);
-    }
+    } 
+        
 }
 
 function run(){
