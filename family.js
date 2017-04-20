@@ -71,16 +71,6 @@ function nodeById(id){
     }
 }
 
-/*
-
-function coupleById(id){
-    for(var i in couples){
-        if(couples[i].id == id){
-            return couples[i];
-        }
-    }	
-}
-*/
 
 function add_couple_child(child){
 
@@ -96,8 +86,6 @@ function add_couple_child(child){
     }
     child.parent_couple_id = couple_id;
     
-    
-    //alert(couple_id+" "+couples[couple_id].children);
 }
 
 function calc_data(){
@@ -110,23 +98,7 @@ function calc_data(){
     }
 }
 
-function _depr_render_tree(node, pos, scale){
-    var person = nodeById(node);
-    render_person(person, pos);
-    
-    if(!person.hasOwnProperty('parents')){
-        return;
-    }
-   
-    var scale_upd = scale*scale_drop;
-    
-    var p1 = {top: pos.top-leaves_pad_height, left: pos.left-scale*leaves_pad_width};
-    var p2 = {top: pos.top-leaves_pad_height, left: pos.left+scale*leaves_pad_width};
-    
-    _depr_render_tree(person.parents[0], p1, scale_upd);
-    _depr_render_tree(person.parents[1], p2, scale_upd);
-    
-}
+
 
 function get_person_rect(person){
 
@@ -159,23 +131,18 @@ function get_person_rect(person){
 
 function calc_couple(couple_id){
 var couple = couples[couple_id];
-	       //alert(couple_id + " " + " "+couple.children);
 	       
-	       //var subtree_width = [];
 	       var cur_x = 0;
 	       /* calculate subtree */
 	       for(var i in couple.children){
-	           //alert('child '+i);
 	           var w = calc_positions(
 	               couple.children[i],
 	               {x:pos.x+i, y:pos.y+1}
 	           )
 	           
-	           //subtree_width.push(w);
 	           var child = nodeById(couple.children[i]);
 	           
 	           child.pos = cur_x + w/2;
-	           //alert(child.name+ ": " +w);
 	           
 	          
         if('couple_id' in child){
@@ -190,35 +157,25 @@ var couple = couples[couple_id];
 	           cur_x += w + subtree_space;
 	       }
 	       
-	       
-	       
 	       var tree_width = cur_x - subtree_space;
-	       
-	       
-	       //alert('total: '+tree_width);
 	       
 	       for(var i in couple.children){
             var child = nodeById(couple.children[i]);
             child.pos -= tree_width/2;
         }
 	           
-	       //alert(person.name + person.couple_id);
-	       //alert('tree width '+tree_width);
-	       
+
 	       return tree_width;
 }
 
 function calc_positions(node){
-    //alert(node);
+    
 
     var person = nodeById(node);
     if('pos' in person){
 	       return;
 	   }
     
-	   //person.pos = pos;
-	   
-	   //alert();
 	   
 	   var rect_width = get_person_rect(person).width;
 	   
@@ -226,8 +183,7 @@ function calc_positions(node){
     if('couple_id' in person){
         
     var couple = couples[person.couple_id];
-    //couple.pos = couple_offset;
-    //alert(person.couple_id+" "+couple.person);
+ 
 	       var tree_width = calc_couple(person.couple_id);
 	       
 	       if(person.sex == 'male'){
@@ -246,8 +202,7 @@ function calc_positions(node){
 	       ).width;
 	       
 	       var couple_width = couple_space + w1 + w2;
-	       
-	       //alert(w1 +" + "+w2 + " " + couple_width +" "+ tree_width);
+
 	       return Math.max(tree_width, couple_width);
 	   } else {
 	       return rect_width;
@@ -260,8 +215,6 @@ function calc_positions(node){
 function render(node, pos){
     var person = nodeById(node);
     render_person(person, pos);
-    
-    //alert(person+""+ pos.x);
     
     if('couple_id' in person){
 	       var couple = couples[person.couple_id];
@@ -287,19 +240,6 @@ function render(node, pos){
 	       
     for(var i in couple.children){
         var child = nodeById(couple.children[i]);
-        //alert(child.name+child.pos)
-        //alert(couple.pos);
-        /*
-        var child_pos = child.pos + pos.x;
-        if('couple_id' in child){
-            var w = get_person_rect(child).width/2;
-            if(child.sex == 'male'){
-            child_pos += w;
-            }else{
-            child_pos -= w;
-            }
-        }
-        */
         render(couple.children[i], {x:pos.x+child.pos+couple.pos, y:pos.y+row_space});
     }
     } 
@@ -315,9 +255,8 @@ function run(){
         node=8;
         
         calc_positions(node);
-        render(node, {x:800, y:500});
+        render(node, {x:1000, y:500});
     
-        //render_tree(30, pos, 1.);
     });
 }
 
