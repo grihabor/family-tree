@@ -81,7 +81,7 @@ function add_couple_child(child){
     
 }
 
-function calc_data(json){
+function fill_person_dict_and_couples(json){
     var data = json;
     /* Fill person_dict */
     for(var i in data){
@@ -89,7 +89,7 @@ function calc_data(json){
         person_dict[person.id] = person;
         }
       
-    
+    /* Fill couples dict */
     for(var i in data){
         var person = data[i];
         
@@ -253,7 +253,7 @@ function run(){
 
     $.getJSON("data.json", function(json) {
         
-        calc_data(json);
+        fill_person_dict_and_couples(json);
         
         node=8;
         
