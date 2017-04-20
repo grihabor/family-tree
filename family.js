@@ -5,6 +5,7 @@ var leaves_pad_height = 100;
 var text_padding = 0;
 var rect_padding = 10;
 var data;
+var _data = {};
 var couples = {};
 
 var subtree_space = rect_padding*2 + 10;
@@ -63,7 +64,8 @@ function render_person(person, pos){
     ctx.fillText(person.surname, surname_pos.left, surname_pos.top);
 }
 
-function nodeById(id){
+
+function _old_nodeById(id){
     for(var i in data){
         if(data[i].id == id){
             return data[i];
@@ -71,6 +73,18 @@ function nodeById(id){
     }
 }
 
+function _new_nodeById(id){
+    return _data[id];
+}
+
+
+function nodeById(id){
+    t = _old_nodeById(id);
+    alert(t.name+id);
+    tt = _new_nodeById(id);
+    alert(tt.name+id);
+    return tt;
+}
 
 function add_couple_child(child){
 
@@ -89,13 +103,24 @@ function add_couple_child(child){
 }
 
 function calc_data(){
+    var data_obj = {};
+    
     for(var i in data){
-        person = data[i];
+    var person = data[i];
+        data_obj[person.id.toString()] = person;
+        }
+       _data = data_obj;
+    
+    for(var i in data){
+        var person = data[i];
+        
+        alert( data_obj[person.id.toString()]+person.id.toString());
         if(!person.hasOwnProperty('parents')){
             continue;
         }
         add_couple_child(person);    
     }
+    
 }
 
 
