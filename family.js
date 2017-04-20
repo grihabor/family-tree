@@ -5,7 +5,7 @@ var leaves_pad_height = 100;
 var text_padding = 0;
 var rect_padding = 10;
 var data;
-var _data = {};
+var person_dict = {};
 var couples = {};
 
 var subtree_space = rect_padding*2 + 10;
@@ -65,25 +65,8 @@ function render_person(person, pos){
 }
 
 
-function _old_nodeById(id){
-    for(var i in data){
-        if(data[i].id == id){
-            return data[i];
-        }
-    }
-}
-
-function _new_nodeById(id){
-    return _data[id];
-}
-
-
 function nodeById(id){
-    t = _old_nodeById(id);
-    alert(t.name+id);
-    tt = _new_nodeById(id);
-    alert(tt.name+id);
-    return tt;
+    return person_dict[id];
 }
 
 function add_couple_child(child){
@@ -102,19 +85,18 @@ function add_couple_child(child){
     
 }
 
-function calc_data(){
-    var data_obj = {};
-    
+function calc_data(json){
+   data = json;
+    /* Fill person_dict */
     for(var i in data){
     var person = data[i];
-        data_obj[person.id.toString()] = person;
+        person_dict[person.id.toString()] = person;
         }
-       _data = data_obj;
+      
     
     for(var i in data){
         var person = data[i];
         
-        alert( data_obj[person.id.toString()]+person.id.toString());
         if(!person.hasOwnProperty('parents')){
             continue;
         }
@@ -274,8 +256,8 @@ function render(node, pos){
 function run(){
 
     $.getJSON("data.json", function(json) {
-        data = json;
-        calc_data();
+        
+        calc_data(json);
         
         node=8;
         
