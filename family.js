@@ -65,10 +65,6 @@ function render_person(person, pos){
 }
 
 
-function nodeById(id){
-    return person_dict[id];
-}
-
 function add_couple_child(child){
 
     parents = child.parents;
@@ -78,8 +74,8 @@ function add_couple_child(child){
        children.push(child.id);
     } else {
        couples[couple_id] = {children: [child.id], person:parents};
-       nodeById(parents[0]).couple_id = couple_id;
-       nodeById(parents[1]).couple_id = couple_id;
+       person_dict[parents[0]].couple_id = couple_id;
+       person_dict[parents[1]].couple_id = couple_id;
     }
     child.parent_couple_id = couple_id;
     
@@ -147,7 +143,7 @@ var couple = couples[couple_id];
 	               {x:pos.x+i, y:pos.y+1}
 	           )
 	           
-	           var child = nodeById(couple.children[i]);
+	           var child = person_dict[couple.children[i]];
 	           
 	           child.pos = cur_x + w/2;
 	           
@@ -167,7 +163,7 @@ var couple = couples[couple_id];
 	       var tree_width = cur_x - subtree_space;
 	       
 	       for(var i in couple.children){
-            var child = nodeById(couple.children[i]);
+            var child = person_dict[couple.children[i]];
             child.pos -= tree_width/2;
         }
 	           
@@ -178,7 +174,7 @@ var couple = couples[couple_id];
 function calc_positions(node){
     
 
-    var person = nodeById(node);
+    var person = person_dict[node];
     if('pos' in person){
 	       return;
 	   }
@@ -200,12 +196,12 @@ function calc_positions(node){
 	       }
 	       
 	       var w1 = get_person_rect(
-	           nodeById(
-	               couple.person[0])
+	           person_dict[
+	               couple.person[0]]
 	       ).width;
 	       var w2 = get_person_rect(
-	           nodeById(
-	               couple.person[1])
+	           person_dict[
+	               couple.person[1]]
 	       ).width;
 	       
 	       var couple_width = couple_space + w1 + w2;
@@ -220,15 +216,15 @@ function calc_positions(node){
 }
 
 function render(node, pos){
-    var person = nodeById(node);
+    var person = person_dict[node];
     render_person(person, pos);
     
     if('couple_id' in person){
 	       var couple = couples[person.couple_id];
 	       
-	       var other = nodeById(couple.person[0]);
+	       var other = person_dict[couple.person[0]];
 	       if(other == person){
-	           other = nodeById(couple.person[1]);
+	           other = person_dict[couple.person[1]];
 	       }
 	       
 	       
@@ -246,7 +242,7 @@ function render(node, pos){
 	       
 	       
     for(var i in couple.children){
-        var child = nodeById(couple.children[i]);
+        var child = person_dict[couple.children[i]];
         render(couple.children[i], {x:pos.x+child.pos+couple.pos, y:pos.y+row_space});
     }
     } 
