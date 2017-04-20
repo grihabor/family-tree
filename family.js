@@ -189,10 +189,9 @@ function calc_positions(node){
  
 	       var tree_width = calc_couple(person.couple_id);
 	       
-	       if(person.sex == 'male'){
-	       couple.pos = rect_width/2;
-	       }else{
-	       couple.pos = - rect_width/2;
+	       couple.pos = (rect_width + couple_space)/2;
+	       if(person.sex != 'male'){
+	            couple.pos = -couple.pos;
 	       }
 	       
 	       var w1 = get_person_rect(
@@ -228,7 +227,7 @@ function render(node, pos){
 	       }
 	       
 	       
-	       var w = get_person_rect(other).width/2;
+	       var w = (get_person_rect(other).width + couple_space)/2;
 	       if(other.sex == 'male'){
 	         w= -w;
 	       }
