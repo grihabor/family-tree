@@ -4,7 +4,7 @@ var leaves_pad_width = 1000;
 var leaves_pad_height = 100;
 var text_padding = 0;
 var rect_padding = 10;
-var data;
+
 var person_dict = {};
 var couples = {};
 
@@ -82,11 +82,11 @@ function add_couple_child(child){
 }
 
 function calc_data(json){
-   data = json;
+    var data = json;
     /* Fill person_dict */
     for(var i in data){
     var person = data[i];
-        person_dict[person.id.toString()] = person;
+        person_dict[person.id] = person;
         }
       
     
