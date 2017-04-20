@@ -8,9 +8,9 @@ var rect_padding = 10;
 var person_dict = {};
 var couples = {};
 
-var subtree_space = rect_padding*2 + 10;
+var subtree_space = 0;
 var row_space = 120;
-var couple_space = 20;
+var couple_space = 0;
 
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
@@ -124,12 +124,19 @@ function get_person_rect(person){
         top: pos.top + text_padding/2
     };
     
-    return {
+    var rect = {
         left: Math.min(name_pos.left, surname_pos.left),
         top: surname_pos.top,
         width: Math.max(name_size.width, surname_size.width),
         height: name_size.height + surname_size.height + text_padding
     };
+    
+    return {
+        left: rect.left - rect_padding,
+        top: rect.top - rect_padding,
+        width: rect.width + 2*rect_padding,
+        height: rect.height + 2*rect_padding
+        }
 }
 
 function calc_couple(couple_id){
@@ -227,7 +234,7 @@ function render(node, pos){
 	       }
 	       
 	       
-	       var w = (get_person_rect(other).width + couple_space)/2;
+	       var w = (get_person_rect(other).width)/2;
 	       if(other.sex == 'male'){
 	         w= -w;
 	       }
