@@ -138,15 +138,13 @@ function calc_couple(couple_id) {
 
         var child = person_dict[couple.children[i]];
 
-        child.pos = cur_x + w / 2;
-
-
+        child.pos = cur_x + w / 2
         if ('couple_id' in child) {
-            var wi = child.width / 2;
-            if (child.sex == 'male') {
-                child.pos = cur_x + wi;
+            var wi = (child.width + couple_space) / 2;
+            if (child.sex != 'male') {
+                child.pos += wi;
             } else {
-                child.pos = cur_x + w - wi;
+                child.pos -= wi;
             }
         }
 
