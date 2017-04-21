@@ -9,7 +9,7 @@ var couples = {};
 
 var subtree_space = 50;
 var row_space = 120;
-var couple_space = 100;
+var couple_space = 60;
 
 var canvas;
 var ctx;
@@ -211,7 +211,7 @@ function render_subtree(node, pos) {
         }
 
 
-        var w = other.width / 2;
+        var w = (other.width + couple_space) / 2;
         if (other.sex == 'male') {
             w = -w;
         }
@@ -220,7 +220,7 @@ function render_subtree(node, pos) {
             x: pos.x + couple.pos + w,
             y: pos.y
         }
-        render_line(pos, pos_to)
+        render_line(pos, pos_to);
         render_person(other, pos_to);
 
         for (var i in couple.children) {
