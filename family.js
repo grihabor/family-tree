@@ -76,15 +76,15 @@ function render_person(person, pos) {
 
 
     ctx.rect(
-        rect.left - rect_padding,
-        rect.top - rect_padding,
-        rect.width + 2 * rect_padding,
-        rect.height + 2 * rect_padding
+        Math.round(rect.left - rect_padding),
+        Math.round(rect.top - rect_padding),
+        Math.round(rect.width + 2 * rect_padding),
+        Math.round(rect.height + 2 * rect_padding)
     );
     ctx.stroke();
 
-    ctx.fillText(person.name, name_pos.left, name_pos.top);
-    ctx.fillText(person.surname, surname_pos.left, surname_pos.top);
+    ctx.fillText(person.name, Math.round(name_pos.left), Math.round(name_pos.top));
+    ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
 }
 
 
