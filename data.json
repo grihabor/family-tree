@@ -242,6 +242,50 @@
 		"sex": "male"
 	},
 	{
+		"id": 51,
+		"surname": "Данилов",
+		"name": "Алексей Васильевич",
+		"parents": [35, 36],
+		"sex": "male"
+	},
+	{
+		"id": 52,
+		"surname": "Данилова",
+		"sex": "female",
+		"name": "Нина Григорьевна",
+		"prev_surname": "Белова"
+	},
+	{
+		"id": 53,
+		"parents": [51, 52],
+		"name": "Иван Алексеевич",
+		"surname": "Данилов",
+		"sex": "male"
+	},
+	{
+		"id": 54,
+		"name": "Ольга Викторовна",
+		"surname": "Данилова",
+		"sex": "female"
+	},
+	{
+		"id": 55,
+		"parents": [53, 54],
+		"sex": "female",
+		"name": "Светлана Ивановна",
+		"surname": "Данилова"
+	},
+	{
+		"id": 56, 
+		"sex": "male"
+	},
+	{
+		"id": 57,
+		"name": "Леонид",
+		"sex": "male",
+		"parents": [55, 56]
+	},
+	{
 		"surname": "Данилова",
 		"sex": "female",
 		"name": "Ольга Ефимовна",
