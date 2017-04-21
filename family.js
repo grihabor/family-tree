@@ -112,6 +112,7 @@ function fill_person_dict_and_couples(json) {
     /* Fill person_dict */
     for (var i in data) {
         var person = data[i];
+        person.width = get_person_rect(person).width;
         person_dict[person.id] = person;
     }
 
@@ -141,7 +142,7 @@ function calc_couple(couple_id) {
 
 
         if ('couple_id' in child) {
-            var wi = get_person_rect(child).width / 2;
+            var wi = child.width / 2;
             if (child.sex == 'male') {
                 child.pos = cur_x + wi;
             } else {
@@ -172,7 +173,7 @@ function calc_positions(node) {
     }
 
 
-    var rect_width = get_person_rect(person).width;
+    var rect_width = person.width;
 
 
     if ('couple_id' in person) {
@@ -186,14 +187,8 @@ function calc_positions(node) {
             couple.pos = -couple.pos;
         }
 
-        var w1 = get_person_rect(
-            person_dict[
-                couple.person[0]]
-        ).width;
-        var w2 = get_person_rect(
-            person_dict[
-                couple.person[1]]
-        ).width;
+        var w1 = person_dict[couple.person[0]].width;
+        var w2 = person_dict[couple.person[1]].width;
 
         var couple_width = couple_space + w1 + w2;
 
@@ -219,7 +214,7 @@ function render(node, pos) {
         }
 
 
-        var w = (get_person_rect(other).width) / 2;
+        var w = other.width / 2;
         if (other.sex == 'male') {
             w = -w;
         }
