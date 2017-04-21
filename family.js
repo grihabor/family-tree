@@ -248,7 +248,7 @@ function run() {
         node = 35;
 
         show_subtree(node, {
-            x: 1000,
+            x: 2000,
             y: 500
         });
 
