@@ -8,9 +8,9 @@ var rect_padding = 10;
 var person_dict = {};
 var couples = {};
 
-var subtree_space = 0;
+var subtree_space = 50;
 var row_space = 120;
-var couple_space = 0;
+var couple_space = 10;
 
 var canvas = document.getElementById('family_tree');
 var ctx = canvas.getContext('2d');
@@ -26,25 +26,25 @@ function render_person(person, pos){
     pos = {left:pos.x, top:pos.y};}
     
 
-    name_size = {
+    var name_size = {
         width: ctx.measureText(person.name).width,
         height: parseInt(ctx.font)
     };
-    surname_size = { 
+    var surname_size = { 
         width: ctx.measureText(person.surname).width,
         height: parseInt(ctx.font)
     };
     
-    surname_pos = {
+    var surname_pos = {
         left: pos.left - surname_size.width/2,
         top: pos.top - surname_size.height - text_padding/2
     };
-    name_pos = {
+    var name_pos = {
         left: pos.left - name_size.width/2,
         top: pos.top + text_padding/2
     };
     
-    rect = {
+    var rect = {
         left: Math.min(name_pos.left, surname_pos.left),
         top: surname_pos.top,
         width: Math.max(name_size.width, surname_size.width),
@@ -67,10 +67,10 @@ function render_person(person, pos){
 
 function add_couple_child(child){
 
-    parents = child.parents;
-    couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
+    var parents = child.parents;
+    var couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
     if(couple_id in couples){
-       children = couples[couple_id].children;
+       var children = couples[couple_id].children;
        children.push(child.id);
     } else {
        couples[couple_id] = {children: [child.id], person:parents};
@@ -85,9 +85,9 @@ function fill_person_dict_and_couples(json){
     var data = json;
     /* Fill person_dict */
     for(var i in data){
-    var person = data[i];
+    	var person = data[i];
         person_dict[person.id] = person;
-        }
+    }
       
     /* Fill couples dict */
     for(var i in data){
@@ -106,20 +106,20 @@ function fill_person_dict_and_couples(json){
 function get_person_rect(person){
 
 
-    name_size = {
+    var name_size = {
         width: ctx.measureText(person.name).width,
         height: parseInt(ctx.font)
     };
-    surname_size = { 
+    var surname_size = { 
         width: ctx.measureText(person.surname).width,
         height: parseInt(ctx.font)
     };
     
-    surname_pos = {
+    var surname_pos = {
         left: pos.left - surname_size.width/2,
         top: pos.top - surname_size.height - text_padding/2
     };
-    name_pos = {
+    var name_pos = {
         left: pos.left - name_size.width/2,
         top: pos.top + text_padding/2
     };
