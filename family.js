@@ -245,7 +245,7 @@ function run() {
 
         fill_person_dict_and_couples(json);
 
-        node = 15;
+        node = 35;
 
         show_subtree(node, {
             x: 1000,
