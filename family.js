@@ -191,6 +191,14 @@ function calc_subtree(node) {
 }
 
 function render_line(pos, pos_to) {
+	pos = {
+		x: Math.round(pos.x),
+		y: Math.round(pos.y)
+	}
+	pos_to = {
+		x: Math.round(pos_to.x),
+		y: Math.round(pos_to.y)
+	}
 	ctx.beginPath();
 	ctx.moveTo(pos.x, pos.y);
 	ctx.lineTo(pos_to.x, pos_to.y);
@@ -198,7 +206,16 @@ function render_line(pos, pos_to) {
 }
 
 function render_zigzag(pos, pos_to) {
-	var y_center = (pos.y + pos_to.y) / 2;
+	pos = {
+		x: Math.round(pos.x),
+		y: Math.round(pos.y)
+	}
+	pos_to = {
+		x: Math.round(pos_to.x),
+		y: Math.round(pos_to.y)
+	}
+	var y_center = Math.round((pos.y + pos_to.y) / 2);
+	
 	ctx.beginPath();
 	ctx.moveTo(pos.x, pos.y);
 	ctx.lineTo(pos.x, y_center);
