@@ -9,13 +9,10 @@ var couples = {};
 
 var subtree_space = 50;
 var row_space = 120;
-var couple_space = 10;
+var couple_space = 100;
 
-var canvas = document.getElementById('family_tree');
-var ctx = canvas.getContext('2d');
-ctx.font = "30px Arial";
-ctx.textAlign = 'left';
-ctx.textBaseline = 'top';
+var canvas;
+var ctx;
 
 
 function get_person_rect(person) {
@@ -75,13 +72,12 @@ function render_person(person, pos) {
     }
 
 
-    ctx.rect(
+    ctx.strokeRect(
         Math.round(rect.left - rect_padding),
         Math.round(rect.top - rect_padding),
         Math.round(rect.width + 2 * rect_padding),
         Math.round(rect.height + 2 * rect_padding)
     );
-    ctx.stroke();
 
     ctx.fillText(person.name, Math.round(name_pos.left), Math.round(name_pos.top));
     ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
@@ -192,9 +188,14 @@ function calc_subtree(node) {
     } else {
         return person.width;
     }
+}
 
-
-
+function render_line(pos, pos_to) {
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos_to.x, pos_to.y);
+	ctx.closePath();
+	ctx.stroke();
 }
 
 function render_subtree(node, pos) {
@@ -215,13 +216,12 @@ function render_subtree(node, pos) {
             w = -w;
         }
 
-        render_person(other, {
+        var pos_to = {
             x: pos.x + couple.pos + w,
             y: pos.y
-        });
-
-
-
+        }
+        render_line(pos, pos_to)
+        render_person(other, pos_to);
 
         for (var i in couple.children) {
             var child = person_dict[couple.children[i]];
@@ -237,19 +237,37 @@ function render_subtree(node, pos) {
 function show_subtree(node, pos) {
 	calc_subtree(node);
 	render_subtree(node, pos);
+	ctx.stroke();
+}
+
+function init_context() {
+	ctx = canvas.getContext('2d');
+	ctx.font = "30px Arial";
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';	
+}
+
+function create_canvas(width, height) {
+	var canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	document.body.appendChild(canvas);
+	return canvas;
 }
 
 function run() {
 
     $.getJSON("data.json", function(json) {
 
+        canvas = create_canvas(5000, 1000);
+        init_context();
+        
         fill_person_dict_and_couples(json);
 
         node = 35;
-
-        show_subtree(node, {
-            x: 2000,
-            y: 500
+		show_subtree(node, {
+            x: 2500,
+            y: 100
         });
 
     });
