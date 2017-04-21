@@ -194,7 +194,16 @@ function render_line(pos, pos_to) {
 	ctx.beginPath();
 	ctx.moveTo(pos.x, pos.y);
 	ctx.lineTo(pos_to.x, pos_to.y);
-	ctx.closePath();
+	ctx.stroke();
+}
+
+function render_zigzag(pos, pos_to) {
+	var y_center = (pos.y + pos_to.y) / 2;
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos.x, y_center);
+	ctx.lineTo(pos_to.x, y_center);
+	ctx.lineTo(pos_to.x, pos_to.y);
 	ctx.stroke();
 }
 
@@ -234,10 +243,16 @@ function render_subtree(node, pos) {
 
         for (var i in couple.children) {
             var child = person_dict[couple.children[i]];
-            render_subtree(couple.children[i], {
+            var child_pos = {
                 x: pos.x + child.pos + couple.pos,
                 y: pos.y + row_space
-            });
+            };
+            render_zigzag({
+            	x: center,
+            	y: pos.y
+            }, child_pos);
+
+            render_subtree(couple.children[i], child_pos);
         }
     }
 
