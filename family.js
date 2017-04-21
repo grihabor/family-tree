@@ -220,7 +220,16 @@ function render_subtree(node, pos) {
             x: pos.x + couple.pos + w,
             y: pos.y
         }
-        render_line(pos, pos_to);
+
+        var center = pos.x + couple.pos;
+
+        render_line({
+        	x: center - couple_space / 2,
+        	y: pos.y
+        }, {
+        	x: center + couple_space / 2,
+        	y: pos.y
+        });
         render_person(other, pos_to);
 
         for (var i in couple.children) {
