@@ -76,15 +76,15 @@ function render_person(person, pos) {
 
 
     ctx.rect(
-        rect.left - rect_padding,
-        rect.top - rect_padding,
-        rect.width + 2 * rect_padding,
-        rect.height + 2 * rect_padding
+        Math.round(rect.left - rect_padding),
+        Math.round(rect.top - rect_padding),
+        Math.round(rect.width + 2 * rect_padding),
+        Math.round(rect.height + 2 * rect_padding)
     );
     ctx.stroke();
 
-    ctx.fillText(person.name, name_pos.left, name_pos.top);
-    ctx.fillText(person.surname, surname_pos.left, surname_pos.top);
+    ctx.fillText(person.name, Math.round(name_pos.left), Math.round(name_pos.top));
+    ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
 }
 
 
@@ -128,7 +128,9 @@ function fill_person_dict_and_couples(json) {
 
 }
 
-function calc_couple(couple_id) {
+function calc_children(couple_id) {
+	/* Calculate children positions */
+
     var couple = couples[couple_id];
 
     var cur_x = 0;
@@ -163,6 +165,7 @@ function calc_couple(couple_id) {
 }
 
 function calc_subtree(node) {
+	/* Calculate couple position */
 
     var person = person_dict[node];
     if ('pos' in person) {
@@ -173,7 +176,7 @@ function calc_subtree(node) {
 
         var couple = couples[person.couple_id];
 
-        var tree_width = calc_couple(person.couple_id);
+        var tree_width = calc_children(person.couple_id);
 
         couple.pos = (person.width + couple_space) / 2;
         if (person.sex != 'male') {
@@ -242,10 +245,10 @@ function run() {
 
         fill_person_dict_and_couples(json);
 
-        node = 15;
+        node = 35;
 
         show_subtree(node, {
-            x: 1000,
+            x: 2000,
             y: 500
         });
 
