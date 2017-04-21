@@ -108,7 +108,9 @@ function fill_person_dict_and_couples(json) {
     /* Fill person_dict */
     for (var i in data) {
         var person = data[i];
-        person.width = get_person_rect(person).width;
+        var rect = get_person_rect(person);
+        person.width = rect.width;
+        person.height = rect.height;
         person_dict[person.id] = person;
     }
 
@@ -205,16 +207,16 @@ function render_line(pos, pos_to) {
 	ctx.stroke();
 }
 
-function render_zigzag(pos, pos_to) {
+function render_zigzag(pos, pos_to, y_from) {
 	pos = {
 		x: Math.round(pos.x),
 		y: Math.round(pos.y)
-	}
+	};
 	pos_to = {
 		x: Math.round(pos_to.x),
 		y: Math.round(pos_to.y)
-	}
-	var y_center = Math.round((pos.y + pos_to.y) / 2);
+	};
+	var y_center = Math.round((y_from + pos_to.y) / 2);
 	
 	ctx.beginPath();
 	ctx.moveTo(pos.x, pos.y);
@@ -264,10 +266,16 @@ function render_subtree(node, pos) {
                 x: pos.x + child.pos + couple.pos,
                 y: pos.y + row_space
             };
+
             render_zigzag({
-            	x: center,
-            	y: pos.y
-            }, child_pos);
+	            	x: center,
+	            	y: pos.y
+	            }, {
+	            	x: child_pos.x,
+	            	y: child_pos.y - child.height / 2
+	            },
+	            pos.y + person.height / 2
+	        );
 
             render_subtree(couple.children[i], child_pos);
         }
