@@ -128,7 +128,9 @@ function fill_person_dict_and_couples(json) {
 
 }
 
-function calc_couple(couple_id) {
+function calc_children(couple_id) {
+	/* Calculate children positions */
+
     var couple = couples[couple_id];
 
     var cur_x = 0;
@@ -163,6 +165,7 @@ function calc_couple(couple_id) {
 }
 
 function calc_subtree(node) {
+	/* Calculate couple position */
 
     var person = person_dict[node];
     if ('pos' in person) {
@@ -173,7 +176,7 @@ function calc_subtree(node) {
 
         var couple = couples[person.couple_id];
 
-        var tree_width = calc_couple(person.couple_id);
+        var tree_width = calc_children(person.couple_id);
 
         couple.pos = (person.width + couple_space) / 2;
         if (person.sex != 'male') {
