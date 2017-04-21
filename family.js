@@ -17,10 +17,27 @@ ctx.font = "30px Arial";
 ctx.textAlign = 'left';
 ctx.textBaseline = 'top';
 
-var pos = {
-    top: 600,
-    left: 2000
-};
+
+function get_person_rect(person) {
+
+	var height = parseInt(ctx.font);
+    var name_size = {
+        width: ctx.measureText(person.name).width
+    };
+    var surname_size = {
+        width: ctx.measureText(person.surname).width
+    };
+
+    var rect = {
+        width: Math.max(name_size.width, surname_size.width),
+        height: 2*height + text_padding
+    };
+
+    return {
+        width: rect.width + 2 * rect_padding,
+        height: rect.height + 2 * rect_padding
+    }
+}
 
 
 function render_person(person, pos) {
@@ -110,56 +127,13 @@ function fill_person_dict_and_couples(json) {
 
 }
 
-
-
-function get_person_rect(person) {
-
-
-    var name_size = {
-        width: ctx.measureText(person.name).width,
-        height: parseInt(ctx.font)
-    };
-    var surname_size = {
-        width: ctx.measureText(person.surname).width,
-        height: parseInt(ctx.font)
-    };
-
-    var surname_pos = {
-        left: pos.left - surname_size.width / 2,
-        top: pos.top - surname_size.height - text_padding / 2
-    };
-    var name_pos = {
-        left: pos.left - name_size.width / 2,
-        top: pos.top + text_padding / 2
-    };
-
-    var rect = {
-        left: Math.min(name_pos.left, surname_pos.left),
-        top: surname_pos.top,
-        width: Math.max(name_size.width, surname_size.width),
-        height: name_size.height + surname_size.height + text_padding
-    };
-
-    return {
-        left: rect.left - rect_padding,
-        top: rect.top - rect_padding,
-        width: rect.width + 2 * rect_padding,
-        height: rect.height + 2 * rect_padding
-    }
-}
-
 function calc_couple(couple_id) {
     var couple = couples[couple_id];
 
     var cur_x = 0;
     /* calculate subtree */
     for (var i in couple.children) {
-        var w = calc_positions(
-            couple.children[i], {
-                x: pos.x + i,
-                y: pos.y + 1
-            }
-        )
+        var w = calc_positions(couple.children[i])
 
         var child = person_dict[couple.children[i]];
 
@@ -287,3 +261,4 @@ function run() {
 }
 
 run();
+
