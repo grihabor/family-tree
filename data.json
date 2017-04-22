@@ -230,42 +230,49 @@
 		"prev_surname": "Туфлина",
 		"name": "Галина Анатольевна",
 		"id": 26,
-		"parents": [31, 32]
+		"parents": [31, 32],
+		"sex": "female"
 	},
 	{
 		"name": "Юрий Анатольевич",
 		"id": 43,
 		"surname": "Туфлин",
-		"parents": [31, 32]
+		"parents": [31, 32],
+		"sex": "male"
 	},
 	{
 		"name": "Вера Григорьевна",
 		"id": 44,
-		"surname": "Сурсаева"
+		"surname": "Сурсаева", 
+		"sex": "female"
 	},
 	{
 		"id": 45,
 		"name": "Антон Юрьевич",
 		"parents": [43, 44],
-		"surname": "Туфлин"
+		"surname": "Туфлин",
+		"sex": "male"
 	},
 	{
 		"id": 46,
 		"name": "Екатерина Юрьевна",
 		"surname": "Туфлина",
-		"parents": [43, 44]
+		"parents": [43, 44],
+		"sex": "female"
 	},
 	{
 		"surname": "Красочка",
 		"name": "Олег Николаевич",
 		"parents": [33, 34],
-		"id": 27
+		"id": 27,
+		"sex": "male"
 	},
 	{
 		"id": 47,
 		"name": "Александр Николаевич",
 		"parents": [33, 34],
-		"surname": "Красочка"
+		"surname": "Красочка",
+		"sex": "male"
 	},
 	{
 		"surname": "Бородин",
