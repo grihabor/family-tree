@@ -9,13 +9,10 @@ var couples = {};
 
 var subtree_space = 50;
 var row_space = 120;
-var couple_space = 10;
+var couple_space = 60;
 
-var canvas = document.getElementById('family_tree');
-var ctx = canvas.getContext('2d');
-ctx.font = "30px Arial";
-ctx.textAlign = 'left';
-ctx.textBaseline = 'top';
+var canvas;
+var ctx;
 
 
 function get_person_rect(person) {
@@ -75,13 +72,12 @@ function render_person(person, pos) {
     }
 
 
-    ctx.rect(
+    ctx.strokeRect(
         Math.round(rect.left - rect_padding),
         Math.round(rect.top - rect_padding),
         Math.round(rect.width + 2 * rect_padding),
         Math.round(rect.height + 2 * rect_padding)
     );
-    ctx.stroke();
 
     ctx.fillText(person.name, Math.round(name_pos.left), Math.round(name_pos.top));
     ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
@@ -112,7 +108,9 @@ function fill_person_dict_and_couples(json) {
     /* Fill person_dict */
     for (var i in data) {
         var person = data[i];
-        person.width = get_person_rect(person).width;
+        var rect = get_person_rect(person);
+        person.width = rect.width;
+        person.height = rect.height;
         person_dict[person.id] = person;
     }
 
@@ -192,9 +190,40 @@ function calc_subtree(node) {
     } else {
         return person.width;
     }
+}
 
+function render_line(pos, pos_to) {
+	pos = {
+		x: Math.round(pos.x),
+		y: Math.round(pos.y)
+	}
+	pos_to = {
+		x: Math.round(pos_to.x),
+		y: Math.round(pos_to.y)
+	}
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos_to.x, pos_to.y);
+	ctx.stroke();
+}
 
-
+function render_zigzag(pos, pos_to, y_from) {
+	pos = {
+		x: Math.round(pos.x),
+		y: Math.round(pos.y)
+	};
+	pos_to = {
+		x: Math.round(pos_to.x),
+		y: Math.round(pos_to.y)
+	};
+	var y_center = Math.round((y_from + pos_to.y) / 2);
+	
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos.x, y_center);
+	ctx.lineTo(pos_to.x, y_center);
+	ctx.lineTo(pos_to.x, pos_to.y);
+	ctx.stroke();
 }
 
 function render_subtree(node, pos) {
@@ -210,25 +239,45 @@ function render_subtree(node, pos) {
         }
 
 
-        var w = other.width / 2;
+        var w = (other.width + couple_space) / 2;
         if (other.sex == 'male') {
             w = -w;
         }
 
-        render_person(other, {
+        var pos_to = {
             x: pos.x + couple.pos + w,
             y: pos.y
+        }
+
+        var center = pos.x + couple.pos;
+
+        render_line({
+        	x: center - couple_space / 2,
+        	y: pos.y
+        }, {
+        	x: center + couple_space / 2,
+        	y: pos.y
         });
-
-
-
+        render_person(other, pos_to);
 
         for (var i in couple.children) {
             var child = person_dict[couple.children[i]];
-            render_subtree(couple.children[i], {
+            var child_pos = {
                 x: pos.x + child.pos + couple.pos,
                 y: pos.y + row_space
-            });
+            };
+
+            render_zigzag({
+	            	x: center,
+	            	y: pos.y
+	            }, {
+	            	x: child_pos.x,
+	            	y: child_pos.y - child.height / 2
+	            },
+	            pos.y + person.height / 2
+	        );
+
+            render_subtree(couple.children[i], child_pos);
         }
     }
 
@@ -237,19 +286,37 @@ function render_subtree(node, pos) {
 function show_subtree(node, pos) {
 	calc_subtree(node);
 	render_subtree(node, pos);
+	ctx.stroke();
+}
+
+function init_context() {
+	ctx = canvas.getContext('2d');
+	ctx.font = "30px Arial";
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';	
+}
+
+function create_canvas(width, height) {
+	var canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	document.body.appendChild(canvas);
+	return canvas;
 }
 
 function run() {
 
     $.getJSON("data.json", function(json) {
 
+        canvas = create_canvas(5000, 1000);
+        init_context();
+        
         fill_person_dict_and_couples(json);
 
         node = 35;
-
-        show_subtree(node, {
-            x: 2000,
-            y: 500
+		show_subtree(node, {
+            x: 2500,
+            y: 100
         });
 
     });
