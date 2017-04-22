@@ -296,32 +296,48 @@ function calc_upper_node(node, node_width) {
     if(!('parent_couple_id' in cur_child)){
         return;
     }
-    alert(cur_child.name+cur_child.parent_couple_id);
+    alert(cur_child.name + " " + cur_child.parent_couple_id);
     var couple = couples[cur_child.parent_couple_id];
     
-    var upper_subtree_width = node_width;
+    var cur_x = node_width;
+    cur_child.pos = node_width / 2;
     
     for(i in couple.children) {
-        if(node == couple.children[i]) {
+    	var child_id = couple.children[i];
+    	/* Skip cur_child */
+        if(node == child_id) {
             continue;
         }
         
-        var subtree_width = calc_subtree(couple.children[i]);
-        upper_subtree_width += subtree_width + subtree_space;
+        var subtree_width = calc_subtree(child_id);        
+        person_dict[child_id].pos = cur_x + subtree_space + subtree_width / 2;        
+        cur_x += subtree_width + subtree_space;
     }
+
+    var upper_subtree_width = cur_x;
+    for(i in couple.children) {
+    	var child = person_dict[couple.children[i]];
+    	child.pos -= upper_subtree_width / 2;
+    }
+    return upper_subtree_width;
 }
 
 function show_subtree(node) {
 	var tree_width = calc_subtree(node);
 	
-	calc_upper_node(node, tree_width);
+	var w = calc_upper_node(node, tree_width);
+
 	tree_width = Math.round(1.2 * tree_width);
 	
 	create_canvas(tree_width, 1000);
+	node = couples[person_dict[node].parent_couple_id].person[0];
 	render_subtree(node, {
 	    x: Math.round(tree_width / 2),
 	    y: row_space
 	});
+
+
+
 	ctx.stroke();
 }
 
