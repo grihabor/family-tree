@@ -322,8 +322,20 @@ function calc_upper_node(node, node_width) {
     return upper_subtree_width;
 }
 
-function render_upper_tree(node) {
+function render_upper_tree(node, pos) {
     var child = person_dict[node];
+    
+    if(!('parent_couple_id' in child)) {
+        return;
+    }
+    var couple_pos = pos.x - child.pos;
+    var couple = couples[child.parent_couple_id];
+    var parent = couple.parents[0];
+    
+    if(parent.sex == 'male'){
+    
+    }
+    
 }
 
 function show_subtree(node) {
