@@ -283,9 +283,45 @@ function render_subtree(node, pos) {
 
 }
 
-function show_subtree(node, pos) {
-	calc_subtree(node);
-	render_subtree(node, pos);
+function create_canvas(width, height) {
+    canvas.width = width;
+    canvas.height = height;
+    document.body.appendChild(canvas);
+    init_context();
+}
+
+function calc_upper_node(node, node_width) {
+    
+    var cur_child = person_dict[node];
+    if(!('parent_couple_id' in cur_child)){
+        return;
+    }
+    alert(cur_child.name+cur_child.parent_couple_id);
+    var couple = couples[cur_child.parent_couple_id];
+    
+    var upper_subtree_width = node_width;
+    
+    for(i in couple.children) {
+        if(node == couple.children[i]) {
+            continue;
+        }
+        
+        var subtree_width = calc_subtree(couple.children[i]);
+        upper_subtree_width += subtree_width + subtree_space;
+    }
+}
+
+function show_subtree(node) {
+	var tree_width = calc_subtree(node);
+	
+	calc_upper_node(node, tree_width);
+	tree_width = Math.round(1.2 * tree_width);
+	
+	create_canvas(tree_width, 1000);
+	render_subtree(node, {
+	    x: Math.round(tree_width / 2),
+	    y: row_space
+	});
 	ctx.stroke();
 }
 
@@ -296,29 +332,16 @@ function init_context() {
 	ctx.textBaseline = 'top';	
 }
 
-function create_canvas(width, height) {
-	var canvas = document.createElement("canvas");
-	canvas.width = width;
-	canvas.height = height;
-	document.body.appendChild(canvas);
-	return canvas;
-}
 
 function run() {
 
     $.getJSON("data.json", function(json) {
 
-        canvas = create_canvas(5000, 1000);
+        canvas = document.createElement("canvas");
         init_context();
-        
         fill_person_dict_and_couples(json);
-
-        node = 41;//35;
-		show_subtree(node, {
-            x: 2500,
-            y: 100
-        });
-
+        node = 1;//41 35
+        show_subtree(node);
     });
 }
 
