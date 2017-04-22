@@ -332,8 +332,8 @@ function calc_upper_node(node, node_width) {
     return upper_subtree_width;
 }
 
-function render_upper_node() {
-
+function render_upper_tree(node) {
+    var child = person_dict[node];
 }
 
 function show_subtree(node) {
@@ -341,14 +341,16 @@ function show_subtree(node) {
 	
 	var w = calc_upper_node(node, tree_width);
 
-	tree_width = Math.round(5 * tree_width);
+	tree_width = Math.round(1.2 * tree_width);
 	
 	create_canvas(tree_width, 1000);
-	node = couples[person_dict[node].parent_couple_id].person[0];
+	
 	render_subtree(node, {
 	    x: Math.round(tree_width / 2),
 	    y: row_space
 	});
+	
+	render_upper_tree(node);
 
 	ctx.stroke();
 }
@@ -368,7 +370,7 @@ function run() {
         canvas = document.createElement("canvas");
         init_context();
         fill_person_dict_and_couples(json);
-        node = 1;//41 35
+        node = 15;//41 35
         show_subtree(node);
     });
 }

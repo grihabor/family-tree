@@ -133,19 +133,19 @@
 	{
 		"id": 15,
 		"sex": "male",
-		"surname": "Тришин",
+		"surname": "Козлов",
 		"name": "Ефим"
 	},
 	{
 		"id": 16,
 		"sex": "female",
-		"surname": "Тришина", 
+		"surname": "Козлова", 
 		"name": "Проскофья"
 	},
 	{
 		"id": 22,
 		"sex": "male",
-		"surname": "Тришин",
+		"surname": "Козлов",
 		"name": "Виктор Ефимович",
 		"parents": [15, 16]
 	},
