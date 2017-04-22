@@ -176,11 +176,6 @@ function calc_subtree(node) {
 
         var tree_width = calc_children(person.couple_id);
 
-        couple.pos = (person.width + couple_space) / 2;
-        if (person.sex != 'male') {
-            couple.pos = -couple.pos;
-        }
-
         var w1 = person_dict[couple.person[0]].width;
         var w2 = person_dict[couple.person[1]].width;
 
@@ -238,7 +233,6 @@ function render_subtree(node, pos) {
             other = person_dict[couple.person[1]];
         }
 
-
         var w = couple_space + (other.width + person.width) / 2;
         if (other.sex == 'male') {
             w = -w;
@@ -267,7 +261,7 @@ function render_subtree(node, pos) {
         for (var i in couple.children) {
             var child = person_dict[couple.children[i]];
             var child_pos = {
-                x: pos.x + child.pos + couple.pos,
+                x: center + child.pos,
                 y: pos.y + row_space
             };
 
@@ -304,11 +298,7 @@ function calc_upper_node(node, node_width) {
     var couple = couples[cur_child.parent_couple_id];
     
     var parent = person_dict[couple.person[0]];
-    couple.pos = (parent.width + couple_space) / 2;
-    if (parent.sex != 'male') {
-        couple.pos = -couple.pos;
-    }
-    
+
     var cur_x = node_width;
     cur_child.pos = node_width / 2;
     
