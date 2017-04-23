@@ -335,10 +335,16 @@ function calc_upper_node(node, node_width) {
 		var w1 = calc_upper_node(couple.person[0], upper_subtree_width);
 		var w2 = calc_upper_node(couple.person[1], upper_subtree_width);
 
-		var supertree_width = w1 + w2 + subtree_space;
+		if(person_dict[couple.person[0]].sex == 'female'){
+			var t = w1;
+			w1 = w2;
+			w2 = t;
+		}
 
-		if(cur_child.pos > - supertree_width / 2){
-			cur_child.pos = - supertree_width / 2;
+		var supertree_width = w1 * 2;//w1 + w2 + subtree_space;
+
+		if(cur_child.pos - (cur_child.width - couple_space) / 2 > - supertree_width / 2){
+			cur_child.pos = (cur_child.width - couple_space) / 2 - supertree_width / 2;
 		}
 		
 		return Math.max(supertree_width, upper_subtree_width);
@@ -376,10 +382,16 @@ function calc_upper_node(node, node_width) {
 		var w1 = calc_upper_node(couple.person[0], upper_subtree_width);
 		var w2 = calc_upper_node(couple.person[1], upper_subtree_width);
 
-		var supertree_width = w1 + w2 + subtree_space;
+		if(person_dict[couple.person[0]].sex == 'female'){
+			var t = w1;
+			w1 = w2;
+			w2 = t;
+		}
 
-		if(cur_child.pos < supertree_width / 2){
-			cur_child.pos = supertree_width / 2;
+		var supertree_width = 2 * w2;//w1 + w2 + subtree_space;
+
+		if(cur_child.pos + (cur_child.width + couple_space) / 2 < supertree_width / 2){
+			cur_child.pos = supertree_width / 2 - (cur_child.width + couple_space) / 2;
 		}
 
 		return Math.max(supertree_width, upper_subtree_width);
@@ -475,7 +487,7 @@ function run() {
 		canvas = document.createElement("canvas");
 		init_context();
 		fill_person_dict_and_couples(json);
-        node = 11; //41 35 65
+        node = 1; //41 35 65
         show_subtree(node);
     });
 }
