@@ -317,7 +317,7 @@ function calc_upper_node(node, node_width) {
 		}
 
 		var upper_subtree_width = cur_x;
-	
+		
 
 	} else {
 		var cur_x = 0;
@@ -335,30 +335,30 @@ function calc_upper_node(node, node_width) {
 		cur_child.pos = cur_x + node_width / 2;
 		var upper_subtree_width = cur_x + node_width;
 	}
-		for(i in couple.children) {
-			var child = person_dict[couple.children[i]];
-			child.pos -= upper_subtree_width / 2;
-			if('couple_id' in child){
-				var x = (child.width + couple_space) / 2;
-				if(child.sex == 'male') {
-					x = -x;
-				}
-				child.pos += x;
+	for(i in couple.children) {
+		var child = person_dict[couple.children[i]];
+		child.pos -= upper_subtree_width / 2;
+		if('couple_id' in child){
+			var x = (child.width + couple_space) / 2;
+			if(child.sex == 'male') {
+				x = -x;
 			}
+			child.pos += x;
 		}
-		
-		upper_subtree_width = Math.max(upper_subtree_width, )
+	}
+	
+	upper_subtree_width = Math.max(upper_subtree_width, )
 
-		/* Calculate supertree */
+	/* Calculate supertree */
 
-		var w1 = calc_upper_node(couple.person[0], upper_subtree_width);
-		var w2 = calc_upper_node(couple.person[1], upper_subtree_width);
+	var w1 = calc_upper_node(couple.person[0], upper_subtree_width);
+	var w2 = calc_upper_node(couple.person[1], upper_subtree_width);
 
-		if(person_dict[couple.person[0]].sex == 'female'){
-			var t = w1;
-			w1 = w2;
-			w2 = t;
-		}
+	if(person_dict[couple.person[0]].sex == 'female'){
+		var t = w1;
+		w1 = w2;
+		w2 = t;
+	}
 
 	if(cur_child.sex == 'female'){
 		var supertree_width = w1 * 2 + couple_space;//w1 + w2 + subtree_space;
