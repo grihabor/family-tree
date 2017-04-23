@@ -289,25 +289,25 @@ function create_canvas(width, height) {
 }
 
 function calc_upper_node(node, node_width) {
-	
+
 	var cur_child = person_dict[node];
 	if(!('parent_couple_id' in cur_child)){
 		return cur_child.width;
 	}
 	alert(cur_child.name + " " + cur_child.parent_couple_id);
 	var couple = couples[cur_child.parent_couple_id];
-	
+
 	if(cur_child.sex == 'female') { 
 		var cur_x = node_width;
 		cur_child.pos = node_width / 2;
-		
+
 		for(var i in couple.children) {
 			var child_id = couple.children[i];
 			/* Skip cur_child */
 			if(node == child_id) {
 				continue;
 			}
-			
+
 			var subtree_width = calc_subtree(child_id);        
 			person_dict[child_id].pos = cur_x + subtree_space + subtree_width / 2;        
 			cur_x += subtree_width + subtree_space;
@@ -321,13 +321,46 @@ function calc_upper_node(node, node_width) {
 		var supertree_width = w1 + w2 + subtree_space;
 
 		var shift = Math.max(cur_child.pos + upper_subtree_width / 2, supertree_width / 2);
-		
+
 		for(i in couple.children) {
 			var child = person_dict[couple.children[i]];
 			child.pos -= shift;
 		}
 
 		return supertree_width;
+	} else {
+		var cur_x = 0;
+		for(var i in couple.children){
+			var child_id = couple.children[i];
+			if(node == child_id){
+				continue;
+			}
+
+			var subtree_width = calc_subtree(child_id);        
+			person_dict[child_id].pos = cur_x + subtree_width / 2;        
+			cur_x += subtree_width + subtree_space;
+		}
+
+		var upper_subtree_width;
+		cur_child.pos = cur_x + cur_child.width / 2;
+		var upper_subtree_width = cur_x + cur_child.width;
+		
+
+		var w1 = calc_upper_node(couple.person[0], upper_subtree_width);
+		var w2 = calc_upper_node(couple.person[1], upper_subtree_width);
+
+		var supertree_width = w1 + w2 + subtree_space;
+
+
+		var shift = Math.max((upper_subtree_width - cur_child.pos) + upper_subtree_width / 2, supertree_width / 2);
+
+		for(i in couple.children) {
+			var child = person_dict[couple.children[i]];
+			child.pos -= shift;
+		}
+
+		return supertree_width;
+
 	}
 }
 
@@ -344,7 +377,7 @@ function render_couple_person(person, couple_pos) {
 
 function render_upper_tree(node, pos) {
 	var child = person_dict[node];
-	
+
 	if(!('parent_couple_id' in child)) {
 		return;
 	}
@@ -353,7 +386,7 @@ function render_upper_tree(node, pos) {
 	person_dict[couple.person[0]],
 	person_dict[couple.person[1]]
 	];
-	
+
 	var couple_pos = {
 		x: pos.x - child.pos,
 		y: pos.y - row_space
