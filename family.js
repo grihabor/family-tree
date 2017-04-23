@@ -317,7 +317,7 @@ function calc_upper_node(node, node_width) {
 		}
 
 		var upper_subtree_width = cur_x;
-		
+
 
 	} else {
 		var cur_x = 0;
@@ -346,8 +346,14 @@ function calc_upper_node(node, node_width) {
 			child.pos += x;
 		}
 	}
-	
-	upper_subtree_width = Math.max(upper_subtree_width, )
+
+	var parents = [
+		person_dict[couple.person[0]],
+		person_dict[couple.person[1]]
+	];
+
+	var couple_width = parents[0].width + couple_space + parents[1].width;
+	upper_subtree_width = Math.max(upper_subtree_width, couple_width);
 
 	/* Calculate supertree */
 
@@ -469,7 +475,7 @@ function run() {
 		canvas = document.createElement("canvas");
 		init_context();
 		fill_person_dict_and_couples(json);
-        node = 1; //41 35 65
+        node = 23; //41 35 65
         show_subtree(node);
     });
 }
