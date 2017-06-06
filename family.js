@@ -15,6 +15,54 @@ var canvas;
 var ctx;
 
 
+function Person(person_data){
+	var rect = get_person_rect(person_data);
+	this.width = rect.width;
+	this.height = rect.height;
+
+	this.name = person_data.name;
+	this.surname = person_data.surname;
+	this.id = person_data.id;
+
+	for (var attr_name in person_data){
+		this[attr_name] = person_data[attr_name];
+	}
+}
+
+function Couple(parents){
+	this.parents = parents;
+	this.children = [];
+	this.get_couple_id = function () {
+		return Math.min(parents[0], parents[1]) + "_" + 
+			Math.max(parents[0], parents[1]);
+	};
+	this.add_child = function (child_id) {
+		this.children.push(child_id);
+	};
+}
+
+function Couples(){
+	this.dict = {}
+	this.add_couple_child = function (child) {
+		var parents = child.parents;
+		var couple = new Couple(parents);
+		var couple_id = couple.get_couple_id()
+		if (couple_id in couples) {
+			/* Couple already exist */
+			couple = couples[couple_id];
+			couple.add_child(child.id);
+		} else {
+			/* Add couple to the dict */
+			couple.add_child(child.id);
+			couples[couple_id] = couple;
+
+			person_dict[parents[0]].couple_id = couple_id;
+			person_dict[parents[1]].couple_id = couple_id;
+		}
+		child.parent_couple_id = couple_id;
+	};
+}
+
 function get_person_rect(person) {
 
 	var height = parseInt(ctx.font);
@@ -84,33 +132,13 @@ function render_person(person, pos) {
 }
 
 
-function add_couple_child(child) {
 
-	var parents = child.parents;
-	var couple_id = Math.min(parents[0], parents[1]) + "_" + Math.max(parents[0], parents[1]);
-	if (couple_id in couples) {
-		var children = couples[couple_id].children;
-		children.push(child.id);
-	} else {
-		couples[couple_id] = {
-			children: [child.id],
-			person: parents
-		};
-		person_dict[parents[0]].couple_id = couple_id;
-		person_dict[parents[1]].couple_id = couple_id;
-	}
-	child.parent_couple_id = couple_id;
 
-}
-
-function fill_person_dict_and_couples(json) {
+function create_person_dict_and_couples(json) {
 	var data = json;
 	/* Fill person_dict */
 	for (var i in data) {
-		var person = data[i];
-		var rect = get_person_rect(person);
-		person.width = rect.width;
-		person.height = rect.height;
+		var person = new Person(data[i]);
 		person_dict[person.id] = person;
 	}
 
