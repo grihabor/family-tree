@@ -263,8 +263,26 @@ function node_directions(node){
 
 }
 
+function clear_graph() {
+ for (var i in person_dict){
+  person_dict[i]._visited = false;
+ }
+}
+
 function apply_to_each_node(func){
+ var person_id = 8;
+ var person = null;
+ var path = [];
  
+ person = person_dict[person_id];
+ person._visited = true;
+ for (var person_id in node_directions(person)) {
+  var p = person_dict[person_id];
+  if (!p._visited) {
+   path.push(person.id);
+   person = p;
+  }
+ }
 }
 
 function calculate_grid(){
