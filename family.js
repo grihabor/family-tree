@@ -23,6 +23,9 @@ function Person(person_data){
 	this.name = person_data.name;
 	this.surname = person_data.surname;
 	this.id = person_data.id;
+	this.couple_id = null;
+	this.parent_couple_id = null;
+	this.sex = person_data.sex;
 
 	for (var attr_name in person_data){
 		this[attr_name] = person_data[attr_name];
@@ -54,7 +57,7 @@ function Couples(){
 		} else {
 			/* Add couple to the dict */
 			couple.add_child(child.id);
-			couples[couple_id] = couple;
+			self.dict[couple_id] = couple;
 
 			person_dict[parents[0]].couple_id = couple_id;
 			person_dict[parents[1]].couple_id = couple_id;
