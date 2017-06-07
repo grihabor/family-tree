@@ -4,7 +4,8 @@ var leaves_pad_height = 100;
 var text_padding = 0;
 var rect_padding = 10;
 
-var person_dict = {};
+var person_dict = null;
+var couples = null;
 
 var subtree_space = 50;
 var row_space = 120;
@@ -25,6 +26,7 @@ function Person(person_data){
 	this.couple_id = null;
 	this.parent_couple_id = null;
 	this.couple_person = null;
+	this.parents = null;
 	this.sex = person_data.sex;
 
 	for (var attr_name in person_data){
@@ -157,7 +159,7 @@ function create_person_dict_and_couples(json) {
 	for (var i in data) {
 		var person = data[i];
 
-		if (!person.hasOwnProperty('parents')) {
+		if (person.parents == null) {
 			continue;
 		}
 		couples.add_couple_child(person);
@@ -240,9 +242,18 @@ function init_context() {
 
 
 function node_directions(node){
-	var dir_list = [
-	 node
-	];
+	var dir_list = [];
+	if (node.couple_person !== null){
+	 dir_list.push(node.couple_person);
+	 var couple = couples.dict[node.couple_id];
+	 for (var i in couple.children) {
+	  dir_list.push(couple.children[i]);
+	 }
+	}
+	if (node.parents !== null) {
+	 dir_list.push(node.parents[0], node.parents[1]);
+	}
+
 }
 
 function apply_to_each_node(func){
