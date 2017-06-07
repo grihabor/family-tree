@@ -6,6 +6,7 @@ var rect_padding = 10;
 
 var person_dict = null;
 var couples = null;
+var layers = {};
 
 var subtree_space = 50;
 var row_space = 120;
@@ -59,7 +60,7 @@ function Couples(){
 		} else {
 			/* Add couple to the dict */
 			couple.add_child(child.id);
-			self.dict[couple_id] = couple;
+			this.dict[couple_id] = couple;
 
 			var p1 = person_dict[parents[0]];
 			p1.couple_id = couple_id;
@@ -260,33 +261,50 @@ function node_directions(node){
 	  new Pair(node.parents[1], -1)
 	  );
 	}
-
+	return dir_list;
 }
 
 function clear_graph() {
- for (var i in person_dict){
-  person_dict[i]._visited = false;
- }
+	for (var i in person_dict){
+		person_dict[i]._visited = false;
+	}
+}
+
+function iterate_node(path, person_id) {
+	var person = person_dict[person_id];
+	person._visited = true;
+	
+	var dir_list = node_directions(person);
+	for (var i in dir_list) {
+		var new_person_id = dir_list[i].person_id;
+		var p = person_dict[new_person_id];
+		if (!p._visited) {
+			path.push(person_id);
+			return p.id;
+		}
+	}
+	return null;
 }
 
 function apply_to_each_node(func){
- var person_id = 8;
- var person = null;
- var path = [];
- 
- person = person_dict[person_id];
- person._visited = true;
- for (var person_id in node_directions(person)) {
-  var p = person_dict[person_id];
-  if (!p._visited) {
-   path.push(person.id);
-   person = p;
-  }
- }
+	var person_id = 8;
+	var person = person_dict[person_id];
+	person._layer = 0;
+	var path = [];
+
+	while(true) {
+		person_id = iterate_node(path, person_id);
+		if (person_id == null) {
+			if (path.length == 0) {
+				break;
+			}
+			person_id = path.pop();
+		}
+	}
 }
 
 function calculate_grid(){
-	
+	apply_to_each_node(null);
 }
 
 function run_(){
@@ -295,8 +313,8 @@ function run_(){
 
 		canvas = document.createElement("canvas");
 		init_context();
-		fill_person_dict_and_couples(json);
-        calculate_grid();
+		create_person_dict_and_couples(json);
+		calculate_grid();
     });
 }
 
