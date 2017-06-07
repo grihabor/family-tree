@@ -240,24 +240,31 @@ function init_context() {
 }
 
 
+function Pair(person_id, shift) {
+ this.person_id = person_id;
+ this.shift = shift;
+}
 
 function node_directions(node){
 	var dir_list = [];
 	if (node.couple_person !== null){
-	 dir_list.push(node.couple_person);
+	 dir_list.push(new Pair(node.couple_person, 0));
 	 var couple = couples.dict[node.couple_id];
 	 for (var i in couple.children) {
-	  dir_list.push(couple.children[i]);
+	  dir_list.push(new Pair(couple.children[i], 1));
 	 }
 	}
 	if (node.parents !== null) {
-	 dir_list.push(node.parents[0], node.parents[1]);
+	 dir_list.push(
+	  new Pair(node.parents[0], -1),
+	  new Pair(node.parents[1], -1)
+	  );
 	}
 
 }
 
 function apply_to_each_node(func){
-
+ 
 }
 
 function calculate_grid(){
