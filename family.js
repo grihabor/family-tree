@@ -270,6 +270,13 @@ function clear_graph() {
 	}
 }
 
+function debug_layers() {
+	for (var i in person_dict){
+		d = document.createElement('div');
+		d.innerHTML = str(person_dict[i]._layer);
+	}
+}
+
 function iterate_node(path, person_id) {
 	var person = person_dict[person_id];
 	person._visited = true;
@@ -310,11 +317,12 @@ function calculate_grid(){
 function run_(){
 
 	$.getJSON("data.json", function(json) {
-
+ //todo: debug children addition
 		canvas = document.createElement("canvas");
 		init_context();
 		create_person_dict_and_couples(json);
 		calculate_grid();
+		debug_layers();
     });
 }
 
