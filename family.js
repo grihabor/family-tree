@@ -348,7 +348,7 @@ function draw_layers(){
 
 function calculate_grid(){
 	apply_to_each_node(next_node, init_layer_calculation);
-	debug_layers();
+	// debug_layers();
 	var t = calc_canvas_size();
 	create_canvas(t.width, t.height);
 	draw_layers();
