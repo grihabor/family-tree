@@ -105,6 +105,11 @@ function render_person(person, pos) {
 		};
 	}
 
+	pos = {
+		left: pos.left + person.width,
+		top: pos.top + person.height
+	}
+
 
 	var name_size = {
 		width: ctx.measureText(person.name).width,
@@ -139,8 +144,28 @@ function render_person(person, pos) {
 		Math.round(rect.height + 2 * rect_padding)
 		);
 
-	ctx.fillText(person.name, Math.round(name_pos.left), Math.round(name_pos.top));
+	ctx.fillText(person.name, Math.round(text_padding), Math.round(name_pos.top));
 	ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
+}
+
+function draw_person(person, pos){
+	ctx.strokeRect(
+		Math.round(pos.x - rect_padding),
+		Math.round(pos.y - rect_padding),
+		Math.round(person.width),
+		Math.round(person.height)
+	);
+
+	ctx.fillText(
+		person.name,
+		Math.round(pos.x),
+		Math.round(pos.y)
+	);
+	ctx.fillText(
+		person.surname,
+		Math.round(pos.x),
+		Math.round(pos.y + (person.height + text_padding) / 2)
+	);	
 }
 
 
@@ -362,10 +387,10 @@ function draw_layers(){
 	for (var i in layers) {
 		var layer = layers[i];
 		var cur_x = 0;
+		var layer_index = parseInt(i);
 		for (var j in layer){
 			var person = person_dict[layer[j]];
-			var layer_index = parseInt(i);
-			render_person(person, {x:cur_x, y:(layer_index+1)*LAYER_HEIGHT});
+			draw_person(person, {x:cur_x, y:(layer_index+1)*LAYER_HEIGHT});
 			cur_x += person.width;
 		}
 	}
