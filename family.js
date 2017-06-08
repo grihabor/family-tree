@@ -15,6 +15,7 @@ var couple_space = 60;
 var canvas;
 var ctx;
 
+var LAYER_HEIGHT = 200;
 
 function Person(person_data){
 	var rect = get_person_rect(person_data);
@@ -272,46 +273,110 @@ function clear_graph() {
 
 function debug_layers() {
 	for (var i in person_dict){
-		d = document.createElement('div');
-		d.innerHTML = str(person_dict[i]._layer);
+		var d = document.createElement('div');
+		var person = person_dict[i];
+		d.innerHTML = person._layer.toString() + " " + person.name;
+		document.body.appendChild(d);
 	}
 }
 
-function iterate_node(path, person_id) {
+function calc_layer_width(layer) {
+	var width = 0;
+	for (var i in layer) {
+		var person = person_dict[layer[i]];
+		width += person.width;
+	}
+	return width;
+}
+
+function calc_max_layer_width() {
+	var max_layer_id = 0;
+	var max_layer_width = calc_layer_width(layers[max_layer_id]);
+
+	for (var i in layers){
+		layer_width = calc_layer_width(layers[i]);
+		if(layer_width > max_layer_width) {
+			max_layer_width = layer_width;
+			max_layer_id = i;
+		}
+	}
+	return {width: max_layer_width, 
+			id: max_layer_id};
+}
+
+function calc_canvas_size(){
+	var max_layer = calc_max_layer_width();
+	return {width: max_layer.width, 
+			height: Object.keys(layers).length * LAYER_HEIGHT}
+}
+
+function add_person_to_layer(person, layer) {
+	if (!(layer in layers)) {
+		layers[layer] = [];
+	}
+	layers[layer].push(person.id);
+	person._layer = layer;
+}
+
+function next_node(path, person_id) {
 	var person = person_dict[person_id];
 	person._visited = true;
 	
 	var dir_list = node_directions(person);
 	for (var i in dir_list) {
 		var new_person_id = dir_list[i].person_id;
+		var shift = dir_list[i].shift;
 		var p = person_dict[new_person_id];
 		if (!p._visited) {
 			path.push(person_id);
+			add_person_to_layer(p, person._layer + shift);
 			return p.id;
 		}
 	}
 	return null;
 }
 
-function apply_to_each_node(func){
-	var person_id = 8;
+function init_layer_calculation(person_id) {
 	var person = person_dict[person_id];
-	person._layer = 0;
+	add_person_to_layer(person, 0);
+}
+
+function apply_to_each_node(func, init_func){
+	var person_id = 8;
+	init_func(person_id);
 	var path = [];
 
 	while(true) {
-		person_id = iterate_node(path, person_id);
+		person_id = func(path, person_id);
 		if (person_id == null) {
 			if (path.length == 0) {
 				break;
+		
 			}
 			person_id = path.pop();
 		}
 	}
 }
 
+function draw_layers(){
+	for (var i in layers) {
+		var layer = layers[i];
+		var cur_x = 0;
+		for (var j in layer){
+			var person = person_dict[layer[j]];
+			var layer_index = parseInt(i);
+			render_person(person, {x:cur_x, y:(layer_index+1)*LAYER_HEIGHT});
+			cur_x += person.width;
+		}
+	}
+}
+
 function calculate_grid(){
-	apply_to_each_node(null);
+	apply_to_each_node(next_node, init_layer_calculation);
+	debug_layers();
+	var t = calc_canvas_size();
+	create_canvas(t.width, t.height);
+	draw_layers();
 }
 
 function run_(){
@@ -321,7 +386,6 @@ function run_(){
 		init_context();
 		create_person_dict_and_couples(json);
 		calculate_grid();
-		debug_layers();
     });
 }
 
