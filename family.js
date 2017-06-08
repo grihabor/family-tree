@@ -16,6 +16,7 @@ var canvas;
 var ctx;
 
 var LAYER_HEIGHT = 200;
+var CANVAS_PADDING = 12;
 
 function Person(person_data){
 	var rect = get_person_rect(person_data);
@@ -49,7 +50,7 @@ function Couple(parents){
 }
 
 function Couples(){
-	this.dict = {}
+	this.dict = {};
 	this.add_couple_child = function (child) {
 		var parents = child.parents;
 		var couple = new Couple(parents);
@@ -271,8 +272,10 @@ function calc_max_layer_width() {
 
 function calc_canvas_size(){
 	var max_layer = calc_max_layer_width();
-	return {width: max_layer.width, 
-			height: Object.keys(layers).length * LAYER_HEIGHT}
+	return {
+	 width: max_layer.width + 2 * CANVAS_PADDING, 
+	 height: Object.keys(layers).length * LAYER_HEIGHT + 2 * CANVAS_PADDING
+	}
 }
 
 function add_person_to_layer(person, layer) {
@@ -307,7 +310,7 @@ function init_layer_calculation(person_id) {
 }
 
 function apply_to_each_node(func, init_func){
-	var person_id = 8;
+	var person_id = 1;
 	init_func(person_id);
 	var path = [];
 
@@ -324,13 +327,20 @@ function apply_to_each_node(func, init_func){
 }
 
 function draw_layers(){
+ var min_layer_i = 0;
+ for(var i in layers){
+  var i_int = parseInt(i);
+  if(i_int < min_layer_i){
+   min_layer_i = i_int;
+  }
+ }
 	for (var i in layers) {
 		var layer = layers[i];
-		var cur_x = 0;
+		var cur_x = CANVAS_PADDING;
 		var layer_index = parseInt(i);
 		for (var j in layer){
 			var person = person_dict[layer[j]];
-			draw_person(person, {x:cur_x, y:(layer_index+1)*LAYER_HEIGHT});
+			draw_person(person, {x:cur_x, y:CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT});
 			cur_x += person.width;
 		}
 	}
