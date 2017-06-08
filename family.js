@@ -53,9 +53,9 @@ function Couples(){
 		var parents = child.parents;
 		var couple = new Couple(parents);
 		var couple_id = couple.get_couple_id()
-		if (couple_id in couples) {
+		if (couple_id in couples.dict) {
 			/* Couple already exist */
-			couple = couples[couple_id];
+			couple = couples.dict[couple_id];
 			couple.add_child(child.id);
 		} else {
 			/* Add couple to the dict */
@@ -317,7 +317,6 @@ function calculate_grid(){
 function run_(){
 
 	$.getJSON("data.json", function(json) {
- //todo: debug children addition
 		canvas = document.createElement("canvas");
 		init_context();
 		create_person_dict_and_couples(json);
