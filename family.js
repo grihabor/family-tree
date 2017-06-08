@@ -97,57 +97,6 @@ function get_person_rect(person) {
 }
 
 
-function render_person(person, pos) {
-	if ('x' in pos) {
-		pos = {
-			left: pos.x,
-			top: pos.y
-		};
-	}
-
-	pos = {
-		left: pos.left + person.width,
-		top: pos.top + person.height
-	}
-
-
-	var name_size = {
-		width: ctx.measureText(person.name).width,
-		height: parseInt(ctx.font)
-	};
-	var surname_size = {
-		width: ctx.measureText(person.surname).width,
-		height: parseInt(ctx.font)
-	};
-
-	var surname_pos = {
-		left: pos.left - surname_size.width / 2,
-		top: pos.top - surname_size.height - text_padding / 2
-	};
-	var name_pos = {
-		left: pos.left - name_size.width / 2,
-		top: pos.top + text_padding / 2
-	};
-
-	var rect = {
-		left: Math.min(name_pos.left, surname_pos.left),
-		top: surname_pos.top,
-		width: Math.max(name_size.width, surname_size.width),
-		height: name_size.height + surname_size.height + text_padding
-	}
-
-
-	ctx.strokeRect(
-		Math.round(rect.left - rect_padding),
-		Math.round(rect.top - rect_padding),
-		Math.round(rect.width + 2 * rect_padding),
-		Math.round(rect.height + 2 * rect_padding)
-		);
-
-	ctx.fillText(person.name, Math.round(text_padding), Math.round(name_pos.top));
-	ctx.fillText(person.surname, Math.round(surname_pos.left), Math.round(surname_pos.top));
-}
-
 function draw_person(person, pos){
 	ctx.strokeRect(
 		Math.round(pos.x - rect_padding),
@@ -237,27 +186,6 @@ function create_canvas(width, height) {
 }
 
 
-/*
-function show_subtree(node) {
-	var tree_width = calc_subtree(node);
-	
-	var w = calc_upper_node(node, tree_width);
-
-	tree_width = 10000;//Math.round(1.2 * tree_width);
-	
-	create_canvas(tree_width, 5000);
-	
-	var pos = {
-		x: Math.round(tree_width / 2),
-		y: 750
-	};
-	render_subtree(node, pos);
-	
-	render_upper_tree(node, pos);
-
-	ctx.stroke();
-}
-*/
 
 function init_context() {
 	ctx = canvas.getContext('2d');
