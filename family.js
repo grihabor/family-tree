@@ -31,6 +31,9 @@ function Person(person_data){
 	this.couple_person = null;
 	this.parents = null;
 	this.sex = person_data.sex;
+	this._x = null;
+	this._y = null;
+	this._layer = null;
 
 	for (var attr_name in person_data){
 		this[attr_name] = person_data[attr_name];
@@ -190,6 +193,31 @@ function render_zigzag(pos, pos_to, y_from) {
 	ctx.stroke();
 }
 
+function draw_connection(person, layer, path){
+ alert("draw " + person.id);
+ if(path.length == 0){
+  return;
+ }
+ var p1 = person_dict[path[path.length - 1]];
+ if (p1._layer < person._layer){
+  var p2 = person;
+ } else if (p1._layer > person._layer){
+  var p2 = p1;
+  p1 = person;
+ } else {
+  return;
+ }
+ 
+ 
+ render_line({
+  x: p1._x + p1.width / 2,
+  y: p1._y + p1.height - CANVAS_PADDING
+ }, {
+  x: p2._x + p2.width / 2,
+  y: p2._y - CANVAS_PADDING
+ });
+}
+
 
 function create_canvas(width, height) {
 	canvas.width = width;
@@ -286,9 +314,10 @@ function add_person_to_layer(person, layer) {
 	person._layer = layer;
 }
 
-function next_node(path, person_id) {
+function next_node(path, person_id, func) {
 	var person = person_dict[person_id];
 	person._visited = true;
+	
 	
 	var dir_list = node_directions(person);
 	for (var i in dir_list) {
@@ -297,7 +326,7 @@ function next_node(path, person_id) {
 		var p = person_dict[new_person_id];
 		if (!p._visited) {
 			path.push(person_id);
-			add_person_to_layer(p, person._layer + shift);
+			func(p, person._layer + shift, path);
 			return p.id;
 		}
 	}
@@ -310,16 +339,18 @@ function init_layer_calculation(person_id) {
 }
 
 function apply_to_each_node(func, init_func){
+ clear_graph();
 	var person_id = 1;
-	init_func(person_id);
+	if(init_func !== null) {
+	 init_func(person_id);
+	}
 	var path = [];
 
 	while(true) {
-		person_id = func(path, person_id);
+		person_id = next_node(path, person_id, func);
 		if (person_id == null) {
 			if (path.length == 0) {
 				break;
-		
 			}
 			person_id = path.pop();
 		}
@@ -340,18 +371,30 @@ function draw_layers(){
 		var layer_index = parseInt(i);
 		for (var j in layer){
 			var person = person_dict[layer[j]];
-			draw_person(person, {x:cur_x, y:CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT});
+			var x = cur_x;
+			var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
+			draw_person(person, {x: x, y: y});
+			person._x = x;
+			person._y = y;
 			cur_x += person.width;
 		}
 	}
 }
 
+
+
 function calculate_grid(){
-	apply_to_each_node(next_node, init_layer_calculation);
+	apply_to_each_node(
+	 add_person_to_layer,
+	 init_layer_calculation
+	);
 	// debug_layers();
 	var t = calc_canvas_size();
 	create_canvas(t.width, t.height);
 	draw_layers();
+	alert();
+	apply_to_each_node(draw_connection, null);
+	
 }
 
 function run_(){
