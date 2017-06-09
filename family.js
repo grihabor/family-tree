@@ -174,6 +174,23 @@ function render_line(pos, pos_to) {
 	ctx.stroke();
 }
 
+function render_bezier(pos, pos_to) {
+	pos = {
+		x: Math.round(pos.x),
+		y: Math.round(pos.y)
+	}
+	pos_to = {
+		x: Math.round(pos_to.x),
+		y: Math.round(pos_to.y)
+	}
+	y_middle = Math.round((pos.y + pos_to.y) / 2);
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
+	ctx.stroke();
+}
+
+
 function render_zigzag(pos, pos_to, y_from) {
 	pos = {
 		x: Math.round(pos.x),
@@ -208,8 +225,7 @@ function draw_connection(person, layer, path){
   return;
  }
  
- 
- render_line({
+ render_bezier({
   x: p1._x + p1.width / 2,
   y: p1._y + p1.height - CANVAS_PADDING
  }, {
