@@ -210,12 +210,11 @@ function render_zigzag(pos, pos_to, y_from) {
 	ctx.stroke();
 }
 
-function draw_connection(person, layer, path){
- alert("draw " + person.id);
- if(path.length == 0){
-  return;
- }
- var p1 = person_dict[path[path.length - 1]];
+function draw_connection(pid1, pid2){
+// alert("draw " + pid1 + );
+ 
+ var p1 = person_dict[pid1];
+ var person = person_dict[pid2];
  if (p1._layer < person._layer){
   var p2 = person;
  } else if (p1._layer > person._layer){
@@ -397,7 +396,15 @@ function draw_layers(){
 	}
 }
 
-
+function draw_connections(){
+ for(var i in person_dict){
+  var p = person_dict[i];
+  if(p.parents !== null){
+   draw_connection(p.id, p.parents[0]);
+   draw_connection(p.id, p.parents[1]);
+  }
+ }
+}
 
 function calculate_grid(){
 	apply_to_each_node(
@@ -408,9 +415,7 @@ function calculate_grid(){
 	var t = calc_canvas_size();
 	create_canvas(t.width, t.height);
 	draw_layers();
-	alert();
-	apply_to_each_node(draw_connection, null);
-	
+	draw_connections();
 }
 
 function run_(){
