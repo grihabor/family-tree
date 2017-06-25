@@ -17,6 +17,7 @@ var ctx;
 
 var LAYER_HEIGHT = 200;
 var CANVAS_PADDING = 12;
+var X_MARGIN = 50;
 
 function Person(person_data){
 	var rect = get_person_rect(person_data);
@@ -210,27 +211,31 @@ function render_zigzag(pos, pos_to, y_from) {
 	ctx.stroke();
 }
 
-function draw_connection(pid1, pid2){
+function draw_connection(parents, child){
 // alert("draw " + pid1 + );
+	// TODO: fix here
  
- var p1 = person_dict[pid1];
- var person = person_dict[pid2];
- if (p1._layer < person._layer){
-  var p2 = person;
- } else if (p1._layer > person._layer){
-  var p2 = p1;
-  p1 = person;
- } else {
-  return;
- }
+	var parent_1 = person_dict[parents[0]];
+	var parent_2 = person_dict[parents[1]];
+
+
+	var person = person_dict[pid2];
+	if (p1._layer < person._layer){
+		var p2 = person;
+	} else if (p1._layer > person._layer){
+ 		var p2 = p1;
+ 		p1 = person;
+	} else {
+		return;
+	}
  
- render_bezier({
-  x: p1._x + p1.width / 2,
-  y: p1._y + p1.height - CANVAS_PADDING
- }, {
-  x: p2._x + p2.width / 2,
-  y: p2._y - CANVAS_PADDING
- });
+	render_bezier({
+		x: p1._x + p1.width / 2,
+		y: p1._y + p1.height - CANVAS_PADDING
+	}, {
+		x: p2._x + p2.width / 2,
+		y: p2._y - CANVAS_PADDING
+	});
 }
 
 
@@ -385,6 +390,9 @@ function draw_layers(){
 		var cur_x = CANVAS_PADDING;
 		var layer_index = parseInt(i);
 		for (var j in layer){
+
+			cur_x += X_MARGIN;
+
 			var person = person_dict[layer[j]];
 			var x = cur_x;
 			var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
