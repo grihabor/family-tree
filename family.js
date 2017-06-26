@@ -217,24 +217,21 @@ function draw_connection(parents, child){
  
 	var parent_1 = person_dict[parents[0]];
 	var parent_2 = person_dict[parents[1]];
-
-
-	var person = person_dict[pid2];
-	if (p1._layer < person._layer){
-		var p2 = person;
-	} else if (p1._layer > person._layer){
- 		var p2 = p1;
- 		p1 = person;
-	} else {
-		return;
-	}
- 
+	child = person_dict[child];
+	
+	var parents_x = (
+		parent_1._x + parent_1.width / 2 +
+		parent_2._x + parent_2.width / 2
+	) / 2;
+	
+	var parents_y = parent_1._y + parent_1.height / 2;
+     
 	render_bezier({
-		x: p1._x + p1.width / 2,
-		y: p1._y + p1.height - CANVAS_PADDING
+		x: parents_x,
+		y: parents_y - CANVAS_PADDING
 	}, {
-		x: p2._x + p2.width / 2,
-		y: p2._y - CANVAS_PADDING
+		x: child._x + child.width / 2,
+		y: child._y - CANVAS_PADDING
 	});
 }
 
@@ -408,8 +405,7 @@ function draw_connections(){
  for(var i in person_dict){
   var p = person_dict[i];
   if(p.parents !== null){
-   draw_connection(p.id, p.parents[0]);
-   draw_connection(p.id, p.parents[1]);
+   draw_connection(p.parents, p.id);
   }
  }
 }
