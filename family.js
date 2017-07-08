@@ -37,20 +37,22 @@ function get_person_rect(person) {
 function create_person_dict_and_couples(json) {
     var data = json;
     person_dict = {};
-    couples = new Couples(person_dict);
 
+    var i = null;
+    var person = null;
 
     /* Fill person_dict */
-    for (var i in data) {
-        var person = new Person(data[i]);
+    for (i in data) {
+        person = new Person(data[i]);
         person_dict[person.id] = person;
     }
 
+    couples = new Couples(person_dict);
     /* Fill couples dict */
-    for (var i in data) {
-        var person = data[i];
+    for (i in data) {
+        person = data[i];
 
-        if (person.parents == null) {
+        if (person.parents === null) {
             continue;
         }
         couples.add_couple_child(person);
@@ -197,8 +199,8 @@ function apply_to_each_node(func, init_func) {
 
     while (true) {
         person_id = next_node(path, person_id, func);
-        if (person_id == null) {
-            if (path.length == 0) {
+        if (person_id === null) {
+            if (path.length === 0) {
                 break;
             }
             person_id = path.pop();
