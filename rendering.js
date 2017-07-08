@@ -43,10 +43,10 @@ function render_line(pos, pos_to) {
 	ctx.stroke();
 }
 
-function render_bezier(pos, pos_to) {
+function render_bezier(pos, pos_to, k=0.5) {
 	pos = round(pos);
 	pos_to = round(pos_to);
-	y_middle = Math.round((pos.y + pos_to.y) / 2);
+	y_middle = Math.round(pos.y * k + pos_to.y * (1 - k));
 	
 	ctx.beginPath();
 	ctx.moveTo(pos.x, pos.y);
@@ -82,11 +82,7 @@ function draw_connection(parents, child){
 		parents_x = (parents_x + parent_2.width) / 2;
 	}
 
-	// parents_x = parent_1._x;
-	
 	var parents_y = parent_1._y + parent_1.height / 2;
-
-	// parents_y = parent_1._y;
      
 	render_bezier({
 		x: parents_x,
@@ -94,7 +90,8 @@ function draw_connection(parents, child){
 	}, {
 		x: child._x + child.width / 2,
 		y: child._y
-	});
+	}, k=0.1);
+
 }
 
 
@@ -113,15 +110,12 @@ function draw_layers(){
 		var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
 
 		for (var j in layer){
-
-			cur_x += X_MARGIN;
-
 			var person = person_dict[layer[j]];
 			var x = cur_x;
 			draw_person(person, {x: x, y: y});
 			person._x = x;
 			person._y = y;
-			cur_x += person.width;
+			cur_x += person.width + X_MARGIN;
 		}
 	}
 }

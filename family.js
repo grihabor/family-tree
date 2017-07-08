@@ -196,6 +196,7 @@ function calc_layer_width(layer) {
 		var person = person_dict[layer[i]];
 		width += person.width;
 	}
+	width += (layer.length - 1) * X_MARGIN;
 	return width;
 }
 
