@@ -1,22 +1,16 @@
-var scale_drop = 0.5;
-var leaves_pad_width = 1000;
-var leaves_pad_height = 100;
-var text_padding = 0;
-var rect_padding = 10;
 
 var person_dict = null;
 var couples = null;
 var layers = {};
 
-var subtree_space = 50;
-var row_space = 120;
-var couple_space = 60;
-
 var canvas;
 var ctx;
 
-var LAYER_HEIGHT = 200;
-var CANVAS_PADDING = 12;
+var LAYER_HEIGHT = 200; // distance between layers
+var CANVAS_PADDING = 12; // distance from canvas border to elements
+var RECT_PADDING = 10; // distance between person rect border and text
+var TEXT_PADDING = 0; // distance between text lines
+var X_MARGIN = 50; // distance between layer elements 
 
 function Person(person_data){
 	var rect = get_person_rect(person_data);
@@ -91,48 +85,14 @@ function get_person_rect(person) {
 
 	var rect = {
 		width: Math.max(name_size.width, surname_size.width),
-		height: 2*height + text_padding
+		height: 2*height + TEXT_PADDING
 	};
 
 	return {
-		width: rect.width + 2 * rect_padding,
-		height: rect.height + 2 * rect_padding
+		width: rect.width + 2 * RECT_PADDING,
+		height: rect.height + 2 * RECT_PADDING
 	}
 }
-
-
-function draw_person(person, pos){
-	var r = [
-		Math.round(pos.x - rect_padding),
-		Math.round(pos.y - rect_padding),
-		Math.round(person.width),
-		Math.round(person.height)
-	];
-	
-	ctx.strokeRect(r[0], r[1], r[2], r[3]);
-	
-	if(person.sex == "male") {
-	 ctx.strokeStyle="#FF0000";
-	} else {
-	 ctx.strokeStyle="#00FF00";
-	}
-	
-	ctx.strokeRect(r[0]+1, r[1]+1, r[2]-2, r[3]-2);
-	
-	ctx.strokeStyle="#000000";
-
-	ctx.fillText(
-		person.name,
-		Math.round(pos.x),
-		Math.round(pos.y)
-	);
-	ctx.fillText(
-		person.surname,
-		Math.round(pos.x),
-		Math.round(pos.y + (person.height + text_padding) / 2)
-	);	
-}
-
 
 
 
@@ -159,79 +119,13 @@ function create_person_dict_and_couples(json) {
 
 }
 
-function render_line(pos, pos_to) {
-	pos = {
+function round(pos){
+ return {
 		x: Math.round(pos.x),
 		y: Math.round(pos.y)
 	}
-	pos_to = {
-		x: Math.round(pos_to.x),
-		y: Math.round(pos_to.y)
-	}
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.lineTo(pos_to.x, pos_to.y);
-	ctx.stroke();
 }
 
-function render_bezier(pos, pos_to) {
-	pos = {
-		x: Math.round(pos.x),
-		y: Math.round(pos.y)
-	}
-	pos_to = {
-		x: Math.round(pos_to.x),
-		y: Math.round(pos_to.y)
-	}
-	y_middle = Math.round((pos.y + pos_to.y) / 2);
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
-	ctx.stroke();
-}
-
-
-function render_zigzag(pos, pos_to, y_from) {
-	pos = {
-		x: Math.round(pos.x),
-		y: Math.round(pos.y)
-	};
-	pos_to = {
-		x: Math.round(pos_to.x),
-		y: Math.round(pos_to.y)
-	};
-	var y_center = Math.round((y_from + pos_to.y) / 2);
-	
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.lineTo(pos.x, y_center);
-	ctx.lineTo(pos_to.x, y_center);
-	ctx.lineTo(pos_to.x, pos_to.y);
-	ctx.stroke();
-}
-
-function draw_connection(pid1, pid2){
-// alert("draw " + pid1 + );
- 
- var p1 = person_dict[pid1];
- var person = person_dict[pid2];
- if (p1._layer < person._layer){
-  var p2 = person;
- } else if (p1._layer > person._layer){
-  var p2 = p1;
-  p1 = person;
- } else {
-  return;
- }
- 
- render_bezier({
-  x: p1._x + p1.width / 2,
-  y: p1._y + p1.height - CANVAS_PADDING
- }, {
-  x: p2._x + p2.width / 2,
-  y: p2._y - CANVAS_PADDING
- });
-}
 
 
 function create_canvas(width, height) {
@@ -295,6 +189,7 @@ function calc_layer_width(layer) {
 		var person = person_dict[layer[i]];
 		width += person.width;
 	}
+	width += (layer.length - 1) * X_MARGIN;
 	return width;
 }
 
@@ -370,40 +265,6 @@ function apply_to_each_node(func, init_func){
 			person_id = path.pop();
 		}
 	}
-}
-
-function draw_layers(){
- var min_layer_i = 0;
- for(var i in layers){
-  var i_int = parseInt(i);
-  if(i_int < min_layer_i){
-   min_layer_i = i_int;
-  }
- }
-	for (var i in layers) {
-		var layer = layers[i];
-		var cur_x = CANVAS_PADDING;
-		var layer_index = parseInt(i);
-		for (var j in layer){
-			var person = person_dict[layer[j]];
-			var x = cur_x;
-			var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
-			draw_person(person, {x: x, y: y});
-			person._x = x;
-			person._y = y;
-			cur_x += person.width;
-		}
-	}
-}
-
-function draw_connections(){
- for(var i in person_dict){
-  var p = person_dict[i];
-  if(p.parents !== null){
-   draw_connection(p.id, p.parents[0]);
-   draw_connection(p.id, p.parents[1]);
-  }
- }
 }
 
 function calculate_grid(){
