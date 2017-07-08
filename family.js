@@ -1,14 +1,7 @@
-var scale_drop = 0.5;
-var leaves_pad_width = 1000;
-var leaves_pad_height = 100;
 
 var person_dict = null;
 var couples = null;
 var layers = {};
-
-var subtree_space = 50;
-var row_space = 120;
-var couple_space = 60;
 
 var canvas;
 var ctx;

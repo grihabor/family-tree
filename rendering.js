@@ -120,11 +120,23 @@ function draw_layers(){
 	}
 }
 
-function draw_connections(){
+function draw_couple_connections(){
+	for(var i in couples){
+		
+
+	}
+}
+
+function draw_parent_child_connections(){
 	for(var i in person_dict){
 		var p = person_dict[i];
 		if(p.parents !== null){
 			draw_connection(p.parents, p.id);
 		}
 	}
+}
+
+function draw_connections(){
+	draw_parent_child_connections();
+	draw_couple_connections();
 }
