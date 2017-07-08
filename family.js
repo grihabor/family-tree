@@ -11,66 +11,6 @@ var RECT_PADDING = 10; // distance between person rect border and text
 var TEXT_PADDING = 0; // distance between text lines
 var X_MARGIN = 50; // distance between layer elements 
 
-function Person(person_data) {
-    var rect = get_person_rect(person_data);
-    this.width = rect.width;
-    this.height = rect.height;
-
-    this.name = person_data.name;
-    this.surname = person_data.surname;
-    this.id = person_data.id;
-    this.couple_id = null;
-    this.parent_couple_id = null;
-    this.couple_person = null;
-    this.parents = null;
-    this.sex = person_data.sex;
-    this._x = null;
-    this._y = null;
-    this._layer = null;
-
-    for (var attr_name in person_data) {
-        this[attr_name] = person_data[attr_name];
-    }
-}
-
-function Couple(parents) {
-    this.parents = parents;
-    this.children = [];
-    this.get_couple_id = function () {
-        return Math.min(parents[0], parents[1]) + "_" +
-            Math.max(parents[0], parents[1]);
-    };
-    this.add_child = function (child_id) {
-        this.children.push(child_id);
-    };
-}
-
-function Couples() {
-    this.dict = {};
-    this.add_couple_child = function (child) {
-        var parents = child.parents;
-        var couple = new Couple(parents);
-        var couple_id = couple.get_couple_id()
-        if (couple_id in couples.dict) {
-            /* Couple already exist */
-            couple = couples.dict[couple_id];
-            couple.add_child(child.id);
-        } else {
-            /* Add couple to the dict */
-            couple.add_child(child.id);
-            this.dict[couple_id] = couple;
-
-            var p1 = person_dict[parents[0]];
-            p1.couple_id = couple_id;
-            p1.couple_person = parents[1];
-
-            var p2 = person_dict[parents[1]];
-            p2.couple_id = couple_id;
-            p2.couple_person = parents[0];
-        }
-        child.parent_couple_id = couple_id;
-    };
-}
 
 function get_person_rect(person) {
 
@@ -96,8 +36,9 @@ function get_person_rect(person) {
 
 function create_person_dict_and_couples(json) {
     var data = json;
-    couples = new Couples();
     person_dict = {};
+    couples = new Couples(person_dict);
+
 
     /* Fill person_dict */
     for (var i in data) {
