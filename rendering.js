@@ -1,43 +1,45 @@
-function render_line(pos, pos_to) {
-    pos = round(pos);
-    pos_to = round(pos_to);
+/*
+ function render_zigzag(pos, pos_to, y_from) {
+ pos = round(pos);
+ pos_to = round(pos_to);
+ var y_center = Math.round((y_from + pos_to.y) / 2);
 
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-    ctx.lineTo(pos_to.x, pos_to.y);
-    ctx.stroke();
-}
-
-function render_bezier(pos, pos_to, k) {
-    if (!k) {
-        k = 0.5;
-    }
-    pos = round(pos);
-    pos_to = round(pos_to);
-    y_middle = Math.round(pos.y * k + pos_to.y * (1 - k));
-
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-    ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
-    ctx.stroke();
-}
-
-function render_zigzag(pos, pos_to, y_from) {
-    pos = round(pos);
-    pos_to = round(pos_to);
-    var y_center = Math.round((y_from + pos_to.y) / 2);
-
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-    ctx.lineTo(pos.x, y_center);
-    ctx.lineTo(pos_to.x, y_center);
-    ctx.lineTo(pos_to.x, pos_to.y);
-    ctx.stroke();
-}
-
+ ctx.beginPath();
+ ctx.moveTo(pos.x, pos.y);
+ ctx.lineTo(pos.x, y_center);
+ ctx.lineTo(pos_to.x, y_center);
+ ctx.lineTo(pos_to.x, pos_to.y);
+ ctx.stroke();
+ }
+ */
 
 function Drawer(ctx) {
     this.ctx = ctx;
+
+    this.render_line = function(pos, pos_to) {
+        pos = round(pos);
+        pos_to = round(pos_to);
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        this.ctx.lineTo(pos_to.x, pos_to.y);
+        this.ctx.stroke();
+    };
+
+    this.render_bezier = function(pos, pos_to, k) {
+        if (!k) {
+            k = 0.5;
+        }
+        pos = round(pos);
+        pos_to = round(pos_to);
+        y_middle = Math.round(pos.y * k + pos_to.y * (1 - k));
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(pos.x, pos.y);
+        this.ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
+        this.ctx.stroke();
+    };
+
     this.draw_person = function(person, pos) {
         var r = [
             Math.round(pos.x),
@@ -112,7 +114,7 @@ function Drawer(ctx) {
 
         var parents_y = parent_1._y + parent_1.height / 2;
 
-        render_bezier({
+        this.render_bezier({
             x: parents_x,
             y: parents_y
         }, {
@@ -137,11 +139,7 @@ function Drawer(ctx) {
         var x2 = parent_2._x;
 
         var y = parent_1._y + parent_1.height / 2;
-        render_line({
-            x: x1, y: y
-        }, {
-            x: x2, y: y
-        });
+        this.render_line({x: x1, y: y}, {x: x2, y: y});
     };
 
 
