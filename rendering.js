@@ -35,53 +35,6 @@ function render_zigzag(pos, pos_to, y_from) {
     ctx.stroke();
 }
 
-function draw_parent_child_connection(parents, child) {
-
-    var parent_1 = person_dict[parents[0]];
-    var parent_2 = person_dict[parents[1]];
-    child = person_dict[child];
-
-    var parents_x = parent_1._x + parent_2._x;
-    if (parent_1._x < parent_2._x) {
-        parents_x = (parents_x + parent_1.width) / 2;
-    } else {
-        parents_x = (parents_x + parent_2.width) / 2;
-    }
-
-    var parents_y = parent_1._y + parent_1.height / 2;
-
-    render_bezier({
-        x: parents_x,
-        y: parents_y
-    }, {
-        x: child._x + child.width / 2,
-        y: child._y
-    }, k = 0.1);
-
-}
-
-function draw_couple_connection(parents) {
-    var parent_1 = person_dict[parents[0]];
-    var parent_2 = person_dict[parents[1]];
-
-    var x = null;
-    if (parent_1._x > parent_2._x) {
-        var t = parent_1;
-        parent_1 = parent_2;
-        parent_2 = t;
-    }
-
-    var x1 = parent_1._x + parent_1.width;
-    var x2 = parent_2._x;
-
-    var y = parent_1._y + parent_1.height / 2;
-    render_line({
-        x: x1, y: y
-    }, {
-        x: x2, y: y
-    });
-}
-
 
 function Drawer(ctx) {
     this.ctx = ctx;
@@ -144,10 +97,58 @@ function Drawer(ctx) {
     };
 
 
+    this.draw_parent_child_connection = function(parents, child) {
+
+        var parent_1 = person_dict[parents[0]];
+        var parent_2 = person_dict[parents[1]];
+        child = person_dict[child];
+
+        var parents_x = parent_1._x + parent_2._x;
+        if (parent_1._x < parent_2._x) {
+            parents_x = (parents_x + parent_1.width) / 2;
+        } else {
+            parents_x = (parents_x + parent_2.width) / 2;
+        }
+
+        var parents_y = parent_1._y + parent_1.height / 2;
+
+        render_bezier({
+            x: parents_x,
+            y: parents_y
+        }, {
+            x: child._x + child.width / 2,
+            y: child._y
+        }, k = 0.1);
+
+    };
+
+    this.draw_couple_connection = function(parents) {
+        var parent_1 = person_dict[parents[0]];
+        var parent_2 = person_dict[parents[1]];
+
+        var x = null;
+        if (parent_1._x > parent_2._x) {
+            var t = parent_1;
+            parent_1 = parent_2;
+            parent_2 = t;
+        }
+
+        var x1 = parent_1._x + parent_1.width;
+        var x2 = parent_2._x;
+
+        var y = parent_1._y + parent_1.height / 2;
+        render_line({
+            x: x1, y: y
+        }, {
+            x: x2, y: y
+        });
+    };
+
+
     this.draw_couple_connections = function() {
         for (var i in couples.dict) {
             var parents = couples.dict[i].parents;
-            draw_couple_connection(parents);
+            this.draw_couple_connection(parents);
         }
     };
 
@@ -155,7 +156,7 @@ function Drawer(ctx) {
         for (var i in person_dict) {
             var p = person_dict[i];
             if (p.parents !== null) {
-                draw_parent_child_connection(p.parents, p.id);
+                this.draw_parent_child_connection(p.parents, p.id);
             }
         }
     };
