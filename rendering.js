@@ -120,10 +120,32 @@ function draw_layers(){
 	}
 }
 
-function draw_couple_connections(){
-	for(var i in couples){
-		
+function draw_couple_connection(parents){
+	var parent_1 = person_dict[parents[0]];
+	var parent_2 = person_dict[parents[1]];
 
+	var x = null;
+	if (parent_1._x > parent_2._x){
+		var t = parent_1;
+		parent_1 = parent_2;
+		parent_2 = t;
+	} 
+
+	var x1 = parent_1._x + parent_1.width;
+	var x2 = parent_2._x;
+
+	var y = parent_1._y + parent_1.height / 2;
+	render_line({
+		x: x1, y: y
+	}, {
+		x: x2, y: y
+	});     
+}
+
+function draw_couple_connections(){
+	for(var i in couples.dict){
+		var parents = couples.dict[i].parents;
+		draw_couple_connection(parents);
 	}
 }
 
