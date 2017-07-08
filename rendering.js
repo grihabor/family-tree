@@ -2,8 +2,8 @@
 
 function draw_person(person, pos){
 	var r = [
-		Math.round(pos.x - rect_padding),
-		Math.round(pos.y - rect_padding),
+		Math.round(pos.x),
+		Math.round(pos.y),
 		Math.round(person.width),
 		Math.round(person.height)
 	];
@@ -22,13 +22,13 @@ function draw_person(person, pos){
 
 	ctx.fillText(
 		person.name,
-		Math.round(pos.x),
-		Math.round(pos.y)
+		Math.round(pos.x + RECT_PADDING),
+		Math.round(pos.y + RECT_PADDING)
 	);
 	ctx.fillText(
 		person.surname,
-		Math.round(pos.x),
-		Math.round(pos.y + (person.height + text_padding) / 2)
+		Math.round(pos.x + RECT_PADDING),
+		Math.round(pos.y + (person.height + TEXT_PADDING) / 2)
 	);	
 }
 
@@ -70,8 +70,6 @@ function render_zigzag(pos, pos_to, y_from) {
 
 
 function draw_connection(parents, child){
-// alert("draw " + pid1 + );
-	// TODO: fix here
  
 	var parent_1 = person_dict[parents[0]];
 	var parent_2 = person_dict[parents[1]];
@@ -84,16 +82,18 @@ function draw_connection(parents, child){
 		parents_x = (parents_x + parent_2.width) / 2;
 	}
 
-	parents_x = parent_1._x
+	// parents_x = parent_1._x;
 	
 	var parents_y = parent_1._y + parent_1.height / 2;
+
+	// parents_y = parent_1._y;
      
 	render_bezier({
 		x: parents_x,
-		y: parents_y - CANVAS_PADDING
+		y: parents_y
 	}, {
 		x: child._x + child.width / 2,
-		y: child._y - CANVAS_PADDING
+		y: child._y
 	});
 }
 
@@ -110,13 +110,14 @@ function draw_layers(){
 		var layer = layers[i];
 		var cur_x = CANVAS_PADDING;
 		var layer_index = parseInt(i);
+		var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
+
 		for (var j in layer){
 
 			cur_x += X_MARGIN;
 
 			var person = person_dict[layer[j]];
 			var x = cur_x;
-			var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
 			draw_person(person, {x: x, y: y});
 			person._x = x;
 			person._y = y;

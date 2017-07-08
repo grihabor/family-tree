@@ -1,8 +1,6 @@
 var scale_drop = 0.5;
 var leaves_pad_width = 1000;
 var leaves_pad_height = 100;
-var text_padding = 0;
-var rect_padding = 10;
 
 var person_dict = null;
 var couples = null;
@@ -15,10 +13,11 @@ var couple_space = 60;
 var canvas;
 var ctx;
 
-var LAYER_HEIGHT = 200;
-var CANVAS_PADDING = 12;
-
-var X_MARGIN = 50;
+var LAYER_HEIGHT = 200; // distance between layers
+var CANVAS_PADDING = 12; // distance from canvas border to elements
+var RECT_PADDING = 10; // distance between person rect border and text
+var TEXT_PADDING = 0; // distance between text lines
+var X_MARGIN = 50; // distance between layer elements 
 
 function Person(person_data){
 	var rect = get_person_rect(person_data);
@@ -93,12 +92,12 @@ function get_person_rect(person) {
 
 	var rect = {
 		width: Math.max(name_size.width, surname_size.width),
-		height: 2*height + text_padding
+		height: 2*height + TEXT_PADDING
 	};
 
 	return {
-		width: rect.width + 2 * rect_padding,
-		height: rect.height + 2 * rect_padding
+		width: rect.width + 2 * RECT_PADDING,
+		height: rect.height + 2 * RECT_PADDING
 	}
 }
 
