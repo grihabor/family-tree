@@ -22,7 +22,6 @@ function render_bezier(pos, pos_to, k) {
     ctx.stroke();
 }
 
-
 function render_zigzag(pos, pos_to, y_from) {
     pos = round(pos);
     pos_to = round(pos_to);
@@ -35,7 +34,6 @@ function render_zigzag(pos, pos_to, y_from) {
     ctx.lineTo(pos_to.x, pos_to.y);
     ctx.stroke();
 }
-
 
 function draw_connection(parents, child) {
 
@@ -61,7 +59,6 @@ function draw_connection(parents, child) {
     }, k = 0.1);
 
 }
-
 
 function draw_couple_connection(parents) {
     var parent_1 = person_dict[parents[0]];
@@ -101,15 +98,9 @@ function draw_parent_child_connections() {
     }
 }
 
-function draw_connections() {
-    draw_parent_child_connections();
-    draw_couple_connections();
-}
-
-
 function Drawer(ctx) {
     this.ctx = ctx;
-    this.draw_person = function (person, pos) {
+    this.draw_person = function(person, pos) {
         var r = [
             Math.round(pos.x),
             Math.round(pos.y),
@@ -119,15 +110,15 @@ function Drawer(ctx) {
 
         this.ctx.strokeRect(r[0], r[1], r[2], r[3]);
 
-        if (person.sex === "male") {
-            ctx.strokeStyle = "#FF0000";
+        if (person.sex === 'male') {
+            ctx.strokeStyle = '#FF0000';
         } else {
-            ctx.strokeStyle = "#00FF00";
+            ctx.strokeStyle = '#00FF00';
         }
 
         this.ctx.strokeRect(r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2);
 
-        this.ctx.strokeStyle = "#000000";
+        this.ctx.strokeStyle = '#000000';
 
         this.ctx.fillText(
             person.name,
@@ -141,7 +132,7 @@ function Drawer(ctx) {
         );
     };
 
-    this.draw_layers = function () {
+    this.draw_layers = function() {
         var min_layer_i = 0;
         var i = null;
         for (i in layers) {
@@ -165,5 +156,10 @@ function Drawer(ctx) {
                 cur_x += person.width + X_MARGIN;
             }
         }
+    };
+
+    this.draw_connections = function() {
+        draw_parent_child_connections();
+        draw_couple_connections();
     };
 }

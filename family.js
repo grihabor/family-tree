@@ -218,7 +218,7 @@ function calculate_grid() {
     create_canvas(t.width, t.height);
     d = new Drawer(ctx);
     d.draw_layers();
-    draw_connections();
+    d.draw_connections();
 }
 
 function run_() {
