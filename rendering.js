@@ -1,17 +1,3 @@
-/*
- function render_zigzag(pos, pos_to, y_from) {
- pos = round(pos);
- pos_to = round(pos_to);
- var y_center = Math.round((y_from + pos_to.y) / 2);
-
- ctx.beginPath();
- ctx.moveTo(pos.x, pos.y);
- ctx.lineTo(pos.x, y_center);
- ctx.lineTo(pos_to.x, y_center);
- ctx.lineTo(pos_to.x, pos_to.y);
- ctx.stroke();
- }
- */
 
 function Drawer(ctx) {
     this.ctx = ctx;
