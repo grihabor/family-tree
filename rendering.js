@@ -1,5 +1,41 @@
 
 
+function render_line(pos, pos_to) {
+	pos = round(pos);
+	pos_to = round(pos_to);
+	
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos_to.x, pos_to.y);
+	ctx.stroke();
+}
+
+function render_bezier(pos, pos_to) {
+	pos = round(pos);
+	pos_to = round(pos_to);
+	y_middle = Math.round((pos.y + pos_to.y) / 2);
+	
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
+	ctx.stroke();
+}
+
+
+function render_zigzag(pos, pos_to, y_from) {
+	pos = round(pos);
+	pos_to = round(pos_to);
+	var y_center = Math.round((y_from + pos_to.y) / 2);
+	
+	ctx.beginPath();
+	ctx.moveTo(pos.x, pos.y);
+	ctx.lineTo(pos.x, y_center);
+	ctx.lineTo(pos_to.x, y_center);
+	ctx.lineTo(pos_to.x, pos_to.y);
+	ctx.stroke();
+}
+
+
 function draw_connection(parents, child){
 // alert("draw " + pid1 + );
 	// TODO: fix here
@@ -14,6 +50,8 @@ function draw_connection(parents, child){
 	} else {
 		parents_x = (parents_x + parent_2.width) / 2;
 	}
+
+	parents_x = parent_1._x
 	
 	var parents_y = parent_1._y + parent_1.height / 2;
      

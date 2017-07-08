@@ -17,6 +17,7 @@ var ctx;
 
 var LAYER_HEIGHT = 200;
 var CANVAS_PADDING = 12;
+
 var X_MARGIN = 50;
 
 function Person(person_data){
@@ -165,41 +166,6 @@ function round(pos){
 		x: Math.round(pos.x),
 		y: Math.round(pos.y)
 	}
-}
-
-function render_line(pos, pos_to) {
-	pos = round(pos);
-	pos_to = round(pos_to);
-	
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.lineTo(pos_to.x, pos_to.y);
-	ctx.stroke();
-}
-
-function render_bezier(pos, pos_to) {
-	pos = round(pos);
-	pos_to = round(pos_to);
-	y_middle = Math.round((pos.y + pos_to.y) / 2);
-	
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.bezierCurveTo(pos.x, y_middle, pos_to.x, y_middle, pos_to.x, pos_to.y);
-	ctx.stroke();
-}
-
-
-function render_zigzag(pos, pos_to, y_from) {
-	pos = round(pos);
-	pos_to = round(pos_to);
-	var y_center = Math.round((y_from + pos_to.y) / 2);
-	
-	ctx.beginPath();
-	ctx.moveTo(pos.x, pos.y);
-	ctx.lineTo(pos.x, y_center);
-	ctx.lineTo(pos_to.x, y_center);
-	ctx.lineTo(pos_to.x, pos_to.y);
-	ctx.stroke();
 }
 
 
