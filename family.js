@@ -52,7 +52,7 @@ function create_person_dict_and_couples(json) {
     for (i in data) {
         person = data[i];
 
-        if (person.parents === null) {
+        if (person.parents == null) {
             continue;
         }
         couples.add_couple_child(person);
@@ -216,7 +216,8 @@ function calculate_grid() {
     // debug_layers();
     var t = calc_canvas_size();
     create_canvas(t.width, t.height);
-    draw_layers();
+    d = new Drawer(ctx);
+    d.draw_layers();
     draw_connections();
 }
 

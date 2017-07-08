@@ -1,36 +1,3 @@
-function draw_person(person, pos) {
-    var r = [
-        Math.round(pos.x),
-        Math.round(pos.y),
-        Math.round(person.width),
-        Math.round(person.height)
-    ];
-
-    ctx.strokeRect(r[0], r[1], r[2], r[3]);
-
-    if (person.sex == "male") {
-        ctx.strokeStyle = "#FF0000";
-    } else {
-        ctx.strokeStyle = "#00FF00";
-    }
-
-    ctx.strokeRect(r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2);
-
-    ctx.strokeStyle = "#000000";
-
-    ctx.fillText(
-        person.name,
-        Math.round(pos.x + RECT_PADDING),
-        Math.round(pos.y + RECT_PADDING)
-    );
-    ctx.fillText(
-        person.surname,
-        Math.round(pos.x + RECT_PADDING),
-        Math.round(pos.y + (person.height + TEXT_PADDING) / 2)
-    );
-}
-
-
 function render_line(pos, pos_to) {
     pos = round(pos);
     pos_to = round(pos_to);
@@ -96,31 +63,6 @@ function draw_connection(parents, child) {
 }
 
 
-function draw_layers() {
-    var min_layer_i = 0;
-    for (var i in layers) {
-        var i_int = parseInt(i);
-        if (i_int < min_layer_i) {
-            min_layer_i = i_int;
-        }
-    }
-    for (var i in layers) {
-        var layer = layers[i];
-        var cur_x = CANVAS_PADDING;
-        var layer_index = parseInt(i);
-        var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
-
-        for (var j in layer) {
-            var person = person_dict[layer[j]];
-            var x = cur_x;
-            draw_person(person, {x: x, y: y});
-            person._x = x;
-            person._y = y;
-            cur_x += person.width + X_MARGIN;
-        }
-    }
-}
-
 function draw_couple_connection(parents) {
     var parent_1 = person_dict[parents[0]];
     var parent_2 = person_dict[parents[1]];
@@ -162,4 +104,66 @@ function draw_parent_child_connections() {
 function draw_connections() {
     draw_parent_child_connections();
     draw_couple_connections();
+}
+
+
+function Drawer(ctx) {
+    this.ctx = ctx;
+    this.draw_person = function (person, pos) {
+        var r = [
+            Math.round(pos.x),
+            Math.round(pos.y),
+            Math.round(person.width),
+            Math.round(person.height)
+        ];
+
+        this.ctx.strokeRect(r[0], r[1], r[2], r[3]);
+
+        if (person.sex === "male") {
+            ctx.strokeStyle = "#FF0000";
+        } else {
+            ctx.strokeStyle = "#00FF00";
+        }
+
+        this.ctx.strokeRect(r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2);
+
+        this.ctx.strokeStyle = "#000000";
+
+        this.ctx.fillText(
+            person.name,
+            Math.round(pos.x + RECT_PADDING),
+            Math.round(pos.y + RECT_PADDING)
+        );
+        this.ctx.fillText(
+            person.surname,
+            Math.round(pos.x + RECT_PADDING),
+            Math.round(pos.y + (person.height + TEXT_PADDING) / 2)
+        );
+    };
+
+    this.draw_layers = function () {
+        var min_layer_i = 0;
+        var i = null;
+        for (i in layers) {
+            var i_int = parseInt(i);
+            if (i_int < min_layer_i) {
+                min_layer_i = i_int;
+            }
+        }
+        for (i in layers) {
+            var layer = layers[i];
+            var cur_x = CANVAS_PADDING;
+            var layer_index = parseInt(i);
+            var y = CANVAS_PADDING + (layer_index - min_layer_i) * LAYER_HEIGHT;
+
+            for (var j in layer) {
+                var person = person_dict[layer[j]];
+                var x = cur_x;
+                this.draw_person(person, {x: x, y: y});
+                person._x = x;
+                person._y = y;
+                cur_x += person.width + X_MARGIN;
+            }
+        }
+    };
 }
