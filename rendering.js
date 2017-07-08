@@ -1,5 +1,38 @@
 
 
+function draw_person(person, pos){
+	var r = [
+		Math.round(pos.x - rect_padding),
+		Math.round(pos.y - rect_padding),
+		Math.round(person.width),
+		Math.round(person.height)
+	];
+	
+	ctx.strokeRect(r[0], r[1], r[2], r[3]);
+	
+	if(person.sex == "male") {
+	 ctx.strokeStyle="#FF0000";
+	} else {
+	 ctx.strokeStyle="#00FF00";
+	}
+	
+	ctx.strokeRect(r[0]+1, r[1]+1, r[2]-2, r[3]-2);
+	
+	ctx.strokeStyle="#000000";
+
+	ctx.fillText(
+		person.name,
+		Math.round(pos.x),
+		Math.round(pos.y)
+	);
+	ctx.fillText(
+		person.surname,
+		Math.round(pos.x),
+		Math.round(pos.y + (person.height + text_padding) / 2)
+	);	
+}
+
+
 function render_line(pos, pos_to) {
 	pos = round(pos);
 	pos_to = round(pos_to);
