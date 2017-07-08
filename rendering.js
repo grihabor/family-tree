@@ -35,7 +35,7 @@ function render_zigzag(pos, pos_to, y_from) {
     ctx.stroke();
 }
 
-function draw_connection(parents, child) {
+function draw_parent_child_connection(parents, child) {
 
     var parent_1 = person_dict[parents[0]];
     var parent_2 = person_dict[parents[1]];
@@ -82,21 +82,6 @@ function draw_couple_connection(parents) {
     });
 }
 
-function draw_couple_connections() {
-    for (var i in couples.dict) {
-        var parents = couples.dict[i].parents;
-        draw_couple_connection(parents);
-    }
-}
-
-function draw_parent_child_connections() {
-    for (var i in person_dict) {
-        var p = person_dict[i];
-        if (p.parents !== null) {
-            draw_connection(p.parents, p.id);
-        }
-    }
-}
 
 function Drawer(ctx) {
     this.ctx = ctx;
@@ -111,9 +96,9 @@ function Drawer(ctx) {
         this.ctx.strokeRect(r[0], r[1], r[2], r[3]);
 
         if (person.sex === 'male') {
-            ctx.strokeStyle = '#FF0000';
+            this.ctx.strokeStyle = '#FF0000';
         } else {
-            ctx.strokeStyle = '#00FF00';
+            this.ctx.strokeStyle = '#00FF00';
         }
 
         this.ctx.strokeRect(r[0] + 1, r[1] + 1, r[2] - 2, r[3] - 2);
@@ -158,8 +143,25 @@ function Drawer(ctx) {
         }
     };
 
+
+    this.draw_couple_connections = function() {
+        for (var i in couples.dict) {
+            var parents = couples.dict[i].parents;
+            draw_couple_connection(parents);
+        }
+    };
+
+    this.draw_parent_child_connections = function() {
+        for (var i in person_dict) {
+            var p = person_dict[i];
+            if (p.parents !== null) {
+                draw_parent_child_connection(p.parents, p.id);
+            }
+        }
+    };
+
     this.draw_connections = function() {
-        draw_parent_child_connections();
-        draw_couple_connections();
+        this.draw_parent_child_connections();
+        this.draw_couple_connections();
     };
 }
