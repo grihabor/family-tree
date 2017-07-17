@@ -30,7 +30,7 @@ function get_person_rect(person) {
     return {
         width: rect.width + 2 * RECT_PADDING,
         height: rect.height + 2 * RECT_PADDING
-    }
+    };
 }
 
 
@@ -64,7 +64,7 @@ function round(pos) {
     return {
         x: Math.round(pos.x),
         y: Math.round(pos.y)
-    }
+    };
 }
 
 
@@ -78,7 +78,7 @@ function create_canvas(width, height) {
 
 function init_context() {
     ctx = canvas.getContext('2d');
-    ctx.font = "30px Arial";
+    ctx.font = '30px Arial';
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
 }
@@ -117,7 +117,7 @@ function debug_layers() {
     for (var i in person_dict) {
         var d = document.createElement('div');
         var person = person_dict[i];
-        d.innerHTML = person._layer.toString() + " " + person.name;
+        d.innerHTML = person._layer.toString() + ' ' + person.name;
         document.body.appendChild(d);
     }
 }
@@ -154,7 +154,7 @@ function calc_canvas_size() {
     return {
         width: max_layer.width + 2 * CANVAS_PADDING,
         height: Object.keys(layers).length * LAYER_HEIGHT + 2 * CANVAS_PADDING
-    }
+    };
 }
 
 function add_person_to_layer(person, layer) {
@@ -208,51 +208,51 @@ function apply_to_each_node(func, init_func) {
     }
 }
 
-function create_gexf(person_dict, couples){
- var params = {
-  defaultEdgeType: 'directed'
- };
- var graph = gexf.create([params]);
- var i, j;
- 
- /* Create person nodes */
- for (i in person_dict) {
-  var person = person_dict[i];
-  graph.addNode({
-   id: person.id,
-   label: person.surname + " " + person.name,
-   attributes: person
-  });
- }
- 
- for (i in couples) {
-  var couple = couples.dict[i];
-  /* Create couple nodes */
-  graph.addNode({
-   id: couple.id,
-   label: couple.id,
-   attributes: {}
-  });
-  
-  /* Create couple - parents edges */
-  for (j in couple.parents) {
-   graph.addEdge({
-    id: couple.parents[j] + '_edge_' + couple.id,
-    source: couple.parents[0],
-    target: couple.id
-   });
-  }
-   
-   /* Create couple - children edges */
-   for (j in couple.children) {
-    graph.addEdge({
-     id: couple.id + '_edge_' + couple.children[j],
-     source: couple.id,
-     target: couple.children[j]
-    });
-   }
-  
- }
+function create_gexf(person_dict, couples) {
+    var params = {
+        defaultEdgeType: 'directed'
+    };
+    var graph = gexf.create([params]);
+    var i, j;
+
+    /* Create person nodes */
+    for (i in person_dict) {
+        var person = person_dict[i];
+        graph.addNode({
+            id: person.id,
+            label: person.surname + ' ' + person.name,
+            attributes: person
+        });
+    }
+
+    for (i in couples) {
+        var couple = couples.dict[i];
+        /* Create couple nodes */
+        graph.addNode({
+            id: couple.id,
+            label: couple.id,
+            attributes: {}
+        });
+
+        /* Create couple - parents edges */
+        for (j in couple.parents) {
+            graph.addEdge({
+                id: couple.parents[j] + '_edge_' + couple.id,
+                source: couple.parents[0],
+                target: couple.id
+            });
+        }
+
+        /* Create couple - children edges */
+        for (j in couple.children) {
+            graph.addEdge({
+                id: couple.id + '_edge_' + couple.children[j],
+                source: couple.id,
+                target: couple.children[j]
+            });
+        }
+
+    }
 }
 
 function calculate_grid() {
@@ -261,22 +261,22 @@ function calculate_grid() {
         init_layer_calculation
     );
     // debug_layers();
-    
+
     create_gexf();
-    
+
     var t = calc_canvas_size();
     create_canvas(t.width, t.height);
     d = new Drawer(ctx);
     d.draw_layers();
     d.draw_connections();
-    
-    
+
+
 }
 
 function run_() {
 
-    $.getJSON("data.json", function (json) {
-        canvas = document.createElement("canvas");
+    $.getJSON('data.json', function(json) {
+        canvas = document.createElement('canvas');
         init_context();
         create_person_dict_and_couples(json);
         calculate_grid();
