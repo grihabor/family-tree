@@ -20,4 +20,4 @@ class Person:
             setattr(self, attr_name, data[attr_name])
 
     def __repr__(self):
-        return '<{0.__class__.__name__} id={0.id} name={0.name} surname={0.surname}>'.format(self)
+        return '<{0.__class__.__name__} id={0.id} name="{0.name}" surname="{0.surname}">'.format(self)
