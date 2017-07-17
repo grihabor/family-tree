@@ -38,4 +38,3 @@ class Data:
             for parent_id in couple.parents:
                 self.persons[parent_id].couple_id = couple.id
 
-
