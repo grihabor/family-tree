@@ -208,17 +208,69 @@ function apply_to_each_node(func, init_func) {
     }
 }
 
+function create_gexf(person_dict, couples){
+ var params = {
+  defaultEdgeType: 'directed'
+ };
+ var graph = gexf.create([params]);
+ var i, j;
+ 
+ /* Create person nodes */
+ for (i in person_dict) {
+  var person = person_dict[i];
+  graph.addNode({
+   id: person.id,
+   label: person.surname + " " + person.name,
+   attributes: person
+  });
+ }
+ 
+ for (i in couples) {
+  var couple = couples.dict[i];
+  /* Create couple nodes */
+  graph.addNode({
+   id: couple.id,
+   label: couple.id,
+   attributes: {}
+  });
+  
+  /* Create couple - parents edges */
+  for (j in couple.parents) {
+   graph.addEdge({
+    id: couple.parents[j] + '_edge_' + couple.id,
+    source: couple.parents[0],
+    target: couple.id
+   });
+  }
+   
+   /* Create couple - children edges */
+   for (j in couple.children) {
+    graph.addEdge({
+     id: couple.id + '_edge_' + couple.children[j],
+     source: couple.id,
+     target: couple.children[j]
+    });
+   }
+  
+ }
+}
+
 function calculate_grid() {
     apply_to_each_node(
         add_person_to_layer,
         init_layer_calculation
     );
     // debug_layers();
+    
+    create_gexf();
+    
     var t = calc_canvas_size();
     create_canvas(t.width, t.height);
     d = new Drawer(ctx);
     d.draw_layers();
     d.draw_connections();
+    
+    
 }
 
 function run_() {
