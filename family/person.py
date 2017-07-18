@@ -10,7 +10,7 @@ class Person(Node):
         assert 'id' in data
         super().__init__(
             data['id'],
-            color=dict(r=100, g=130, b=200),
+            color="rgb(100,130,200)",
             size=3
         )
 

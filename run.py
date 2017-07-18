@@ -1,38 +1,52 @@
+import json
+
 from family.data import Data
-import networkx as nx
 import os
+
+from family.node import Node
 
 DIR_DATA = 'data'
 FILE_JSON = os.path.join(DIR_DATA, 'data.json')
-FILE_TEMP = os.path.join(DIR_DATA, 'tmp.gefx')
-FILE_GEFX = os.path.join(DIR_DATA, 'data.gefx')
+# FILE_TEMP = os.path.join(DIR_DATA, 'tmp.gefx')
+# FILE_GEFX = os.path.join(DIR_DATA, 'data.gefx')
+GRAPH_JSON = os.path.join(DIR_DATA, 'graph.json')
 
+class GraphNode:
+    def __init__(self, node: Node):
+        self.id = node.id
+        self.type = str(type(node))
+        self.label = node.label
 
 def main():
     data = Data(FILE_JSON)
-    g = nx.DiGraph()
+
+    graph = dict(
+        nodes=[],
+        edges=[],
+    )
+
     for layer_id, node_list in data.layers.items():
         for x, node_id in enumerate(node_list):
             node = data.nodes[node_id]
-            g.add_node(node_id, attr_dict=dict(
-                viz=dict(
-                    position=dict(x=x, y=layer_id, z=0),
-                    color=node.color,
-                    size=node.size
-                )
+            graph['nodes'].append(dict(
+                id=node.id,
+                label=node.label.replace(' ', '\n'),
+                type='square',
+                x=x,
+                y=layer_id,
+                color=node.color,
+                size=node.size
             ))
-            #g.node[node_id]['viz']['position']['x'] = x
-            #g.node[node_id]['viz']['position']['y'] = layer_id
-    for src, dst, _ in data.walk():
-        g.add_edge(src, dst)
-    nx.write_gexf(g, FILE_TEMP)
 
+    for edge_id, (src, dst, _) in enumerate(data.walk()):
+        graph['edges'].append(dict(
+            id='edge_{}'.format(edge_id),
+            source=src,
+            target=dst
+        ))
 
-    with open(FILE_GEFX, 'w') as fw, open(FILE_TEMP, 'r') as fr:
-        for line in fr:
-            line = line.replace('<ns0:', '<viz:')
-            print(line)
-            fw.write(line)
+    with open(GRAPH_JSON, 'w') as f:
+        json.dump(graph, f)
 
 
 if __name__ == '__main__':

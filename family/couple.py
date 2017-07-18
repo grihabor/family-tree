@@ -8,7 +8,7 @@ class Couple(Node):
         self.children = []
         super().__init__(
             '_'.join(str(id_) for id_ in self.parents),
-            color=dict(r=200, g=130, b=100),
+            color="rgb(200,130,100)",
             size=1
         )
 
