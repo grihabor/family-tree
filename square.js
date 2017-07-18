@@ -1,4 +1,6 @@
-sigma.canvas.labels.square = function(node, context, settings) {
+
+rect_renderer = function(node, context, settings) {
+    context.save();
     // declarations
     var prefix = settings('prefix') || '';
     var size = node[prefix + 'size'];
@@ -6,24 +8,7 @@ sigma.canvas.labels.square = function(node, context, settings) {
     var nodeY = node[prefix + 'y'];
     var textWidth;
     // define settings
-    context.fillStyle = node.textColor;
-    context.lineWidth = size * 0.1;
-    context.font = '400 ' + size + 'px AvenirNext';
-    context.textAlign = 'center';
-    context.fillText(node.label, nodeX, nodeY + size * 0.375 * 5.);
-    // measure text width
-    textWidth = context.measureText(node.label).width
-    node.labelWidth = textWidth; // important for clicks
-};
-sigma.canvas.nodes.square = function(node, context, settings) {
-    // declarations
-    var prefix = settings('prefix') || '';
-    var size = node[prefix + 'size'];
-    var nodeX = node[prefix + 'x'];
-    var nodeY = node[prefix + 'y'];
-    var textWidth;
-    // define settings
-    context.fillStyle = node.fillColor;
+    context.fillStyle = "#ffffff";//node.fillColor;
     context.strokeStyle = node.color || settings('defaultNodeColor');
     context.lineWidth = size * 0.1;
     context.font = '400 ' + size + 'px AvenirNext';
@@ -32,12 +17,66 @@ sigma.canvas.nodes.square = function(node, context, settings) {
     // draw path
     context.beginPath();
     context.rect(
-        nodeX - (textWidth * 1.2) * 0.5,
-        nodeY - size * 1.2 * 0.5,
-        textWidth * 1.2,
-        size * 1.2
+        Math.round(nodeX - (textWidth * .6) * 0.5),
+        Math.round(nodeY + size * .7),
+        Math.round(textWidth * .6),
+        Math.round(size * 4)
     );
     context.closePath();
     context.fill();
     context.stroke();
+    context.restore();
+};
+
+text_renderer = function(node, context, settings) {
+    context.save();
+    // declarations
+    var prefix = settings('prefix') || '';
+    var size = node[prefix + 'size'];
+    var nodeX = node[prefix + 'x'];
+    var nodeY = node[prefix + 'y'];
+    var textWidth;
+
+    var label = node.label.split(' ');
+    var i;
+    var maxTextWidth = 0;
+
+    // define settings
+    context.fillStyle = node.textColor;
+    context.lineWidth = size * 0.1;
+    context.font = '400 ' + size + 'px AvenirNext';
+    context.textAlign = 'center';
+    // console.log(label, node.label);
+    for (i in label){
+        context.fillText(
+            label[i],
+            Math.round(nodeX),
+            Math.round(nodeY + size * (2 + parseInt(i)))
+        );
+        textWidth = context.measureText(label[i]).width;
+        if (maxTextWidth < textWidth) {
+            maxTextWidth = textWidth;
+        }
+    }
+
+    node.labelWidth = maxTextWidth; // important for clicks
+    context.stroke();
+    context.restore();
+};
+
+
+
+sigma.canvas.nodes.square = function(node, context, settings) {
+    rect_renderer(node, context, settings);
+};
+
+
+sigma.canvas.labels.square = function(node, context, settings) {
+    text_renderer(node, context, settings);
+};
+
+
+sigma.canvas.hovers.square = function(node, context, settings) {
+    rect_renderer(node, context, settings);
+    text_renderer(node, context, settings);
 };

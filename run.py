@@ -30,7 +30,7 @@ def main():
             node = data.nodes[node_id]
             graph['nodes'].append(dict(
                 id=node.id,
-                label=node.label.replace(' ', '\n'),
+                label=node.label,
                 type='square',
                 x=x,
                 y=layer_id,
