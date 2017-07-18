@@ -17,6 +17,6 @@ class Couple(Node):
 
     @property
     def label(self):
-        return 'children={}'.format(tuple(self.children))
+        return ''
 
 

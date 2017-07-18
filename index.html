@@ -2,9 +2,9 @@
 <head>
     <meta charset="UTF-8">
     <script type='text/javascript' src='sigma/sigma.min.js'></script>
+    <script type='text/javascript' src='square.js'></script>
     <script type='text/javascript' src='sigma/plugins/sigma.parsers.json.min.js'></script>
 
-    <script type='text/javascript' src='square.js'></script>
 
     <title>
         Family tree
@@ -25,16 +25,7 @@
 
 <div id="sigma-container"></div>
 
-<script type='text/javascript'>
-
-    sigma.parsers.json(
-        'data/graph.json',
-        {container: 'sigma-container'},
-        function (s) {
-        }
-    );
-
-</script>
+<script type='text/javascript' src="family.js"></script>
 
 </body>
 </html>
