@@ -96,3 +96,40 @@ class Data:
                 raise RuntimeError('Next node layer must be uninitizlied')
 
         return layers
+
+    def ordered_nodes(self, nodes):
+        groups = {}
+        ordered = []
+        for node_id in nodes:
+            node = self.nodes[node_id]
+            if type(node) == Couple:
+                """groups[couple] -> parents"""
+                groups[node.id] = node.parents
+                """groups[parents] -> couple"""
+                groups[node.parents[0]] = node.id
+                groups[node.parents[1]] = node.id
+
+        for node_id in nodes:
+            node = self.nodes[node_id]
+            if node.id not in groups:
+                ordered.append(node_id)
+            else:
+                if node_id in ordered:
+                    """Already added"""
+                    continue
+
+                if type(node) == Person:
+                    node = self.nodes[node.couple_id]
+
+                """type(node) is guaranteed to be Couple"""
+                ordered.append(node.parents[0])
+                ordered.append(node.id)
+                ordered.append(node.parents[1])
+
+        return ordered
+
+    def place_couples(self):
+        ordered_layers = {}
+        for layer_id, nodes in self.layers.items():
+            ordered_layers[layer_id] = self.ordered_nodes(nodes)
+        self.layers = ordered_layers
