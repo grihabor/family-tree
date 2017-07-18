@@ -1,18 +1,30 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <script type='text/javascript' src='jquery.min.js'></script>
-    <script type='text/javascript' src='sigma/sigma.min.js'></script>
+    <script type='text/javascript' src='sigma/sigma.js'></script>
     <script type='text/javascript' src='sigma/plugins/sigma.parsers.gexf.min.js'></script>
-    <script type='text/javascript' src='person.js'></script>
-    <script type='text/javascript' src='couple.js'></script>
-    <script type='text/javascript' src='rendering.js'></script>
     <title>
         Family tree
     </title>
+
+    <style type="text/css">
+        #sigma-container {
+            position: fixed;
+            padding: 0;
+            margin: 0;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body>
+
+<div id="sigma-container"></div>
 
 <script type='text/javascript' src='family.js'></script>
 

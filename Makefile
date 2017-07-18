@@ -1,0 +1,2 @@
+gefx:
+	docker build 

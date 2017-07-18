@@ -3,8 +3,10 @@ from typing import List, Tuple
 
 
 class Node(ABC):
-    def __init__(self, node_id):
+    def __init__(self, node_id, color, size):
         self.id = node_id
+        self.color = color
+        self.size = size
 
         self.x = None
         self.y = None

@@ -8,7 +8,11 @@ logger = logging.getLogger(__name__)
 class Person(Node):
     def __init__(self, data: dict):
         assert 'id' in data
-        super().__init__(data['id'])
+        super().__init__(
+            data['id'],
+            color=dict(r=100, g=130, b=200),
+            size=3
+        )
 
         self.name = None
         self.surname = None
