@@ -34,31 +34,6 @@ function get_person_rect(person) {
 }
 
 
-function create_person_dict_and_couples(json) {
-    var data = json;
-    person_dict = {};
-
-    var i = null;
-    var person = null;
-
-    /* Fill person_dict */
-    for (i in data) {
-        person = new Person(data[i]);
-        person_dict[person.id] = person;
-    }
-
-    couples = new Couples(person_dict);
-    /* Fill couples dict */
-    for (i in data) {
-        person = data[i];
-
-        if (person.parents == null) {
-            continue;
-        }
-        couples.add_couple_child(person);
-    }
-
-}
 
 function round(pos) {
     return {

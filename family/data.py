@@ -37,4 +37,10 @@ class Data:
             """ couple <- parents """
             for parent_id in couple.parents:
                 self.persons[parent_id].couple_id = couple.id
-
+    
+class GraphWalker:
+    def __init__(self, data):
+        self.data = data
+        
+    def __iter__(self):
+        
