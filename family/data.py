@@ -41,6 +41,7 @@ class Data:
 class GraphWalker:
     def __init__(self, data):
         self.data = data
-        
+
     def __iter__(self):
+        pass
         
