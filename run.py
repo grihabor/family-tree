@@ -1,9 +1,11 @@
 from family.data import Data
 import networkx as nx
+import os
 
-FILE_JSON = 'data.json'
-FILE_TEMP = 'data_tmp.gefx'
-FILE_GEFX = 'data.gefx'
+DIR_DATA = 'data'
+FILE_JSON = os.path.join(DIR_DATA, 'data.json')
+FILE_TEMP = os.path.join(DIR_DATA, 'tmp.gefx')
+FILE_GEFX = os.path.join(DIR_DATA, 'data.gefx')
 
 
 def main():

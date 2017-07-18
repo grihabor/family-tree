@@ -2,7 +2,7 @@
 
 
 sigma.parsers.gexf(
-    'data.gefx',
+    'data/data.gefx',
     { // Here is the ID of the DOM element that
       // will contain the graph:
       container: 'sigma-container'
