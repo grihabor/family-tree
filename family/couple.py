@@ -6,12 +6,12 @@ class Couple(Node):
         assert len(parents) == 2
         self.parents = parents if parents[0] < parents[1] else parents[::-1]
         self.children = []
-        self.id = '_'.join(str(id_) for id_ in self.parents)
+        super().__init__('_'.join(str(id_) for id_ in self.parents))
 
-    def __repr__(self):
-        return '<{} id={} children={}>'.format(
-            self.__class__.__name__, self.id, tuple(self.children)
-        )
+    def steps(self):
+        return [(p, 0) for p in self.parents] + [(ch, 1) for ch in self.children]
 
-    def edges(self):
-        return self.parents + self.children
+    @property
+    def label(self):
+        return 'children={}'.format(tuple(self.children))
+

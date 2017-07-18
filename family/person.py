@@ -1,33 +1,39 @@
+import logging
+
 from .node import Node
+
+logger = logging.getLogger(__name__)
 
 
 class Person(Node):
     def __init__(self, data: dict):
+        assert 'id' in data
+        super().__init__(data['id'])
 
         self.name = None
         self.surname = None
+        self.prev_surname = None
         self.id = None
         self.sex = None
 
         self.couple_id = None
         self.parent_couple_id = None
-        # self.couple_person = None
         self.parents = None
 
-        self.x = None
-        self.y = None
-        self.layer = None
+        for attr_name, value in data.items():
+            if hasattr(self, attr_name):
+                setattr(self, attr_name, value)
+            else:
+                logger.warning('Unexpected field {}={}'.format(attr_name, value))
 
-        for attr_name in data:
-            setattr(self, attr_name, data[attr_name])
-
-    def __repr__(self):
-        return '<{0.__class__.__name__} id={0.id} name="{0.name}" surname="{0.surname}">'.format(self)
-
-    def edges(self):
+    def steps(self):
         edges = []
         if self.couple_id:
-            edges.append(self.couple_id)
+            edges.append((self.couple_id, 0))
         if self.parent_couple_id:
-            edges.append(self.parent_couple_id)
+            edges.append((self.parent_couple_id, -1))
         return edges
+
+    @property
+    def label(self):
+        return '{} {}'.format(self.name, self.surname)

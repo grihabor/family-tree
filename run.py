@@ -11,6 +11,8 @@ def main():
     print(data)
     pprint(data.persons)
     pprint(data.couples)
+    pprint(data.nodes)
+    pprint(data.layers)
 
 if __name__ == '__main__':
     main()
