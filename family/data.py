@@ -63,22 +63,26 @@ class Data:
     @classmethod
     def walk_nodes(cls, nodes):
         """DFS algorithm"""
-        node_list = [next(iter(nodes.values()))]
-        visited = {node_list[0].id}
+
+        node = next(iter(nodes.values()))
+        path = [None]
+        visited = {node.id}
 
         while True:
-            next_node_list = []
-            for node in node_list:
-                for next_node_id, layer_step in node.steps():
-                    if next_node_id not in visited:
-                        next_node = nodes[next_node_id]
-                        next_node_list.append(next_node)
-                        visited.add(next_node.id)
-                        yield node.id, next_node.id, layer_step
-            if not next_node_list:
-                break
-
-            node_list = next_node_list
+            next_node = None
+            for next_node_id, layer_step in node.steps():
+                if next_node_id not in visited:
+                    next_node = nodes[next_node_id]
+                    visited.add(next_node.id)
+                    path.append(node.id)
+                    yield node.id, next_node.id, layer_step
+                    break
+            if next_node is None:
+                next_node_id = path.pop()
+                if next_node_id is None:
+                    break
+                next_node = nodes[next_node_id]
+            node = next_node
 
     @classmethod
     def _layers_dict(cls, nodes):
