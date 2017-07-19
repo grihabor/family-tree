@@ -13,6 +13,7 @@ class Couple(Node):
         )
 
     def steps(self):
+        # Order is important for better visualization
         return [(p, 0) for p in self.parents] + [(ch, 1) for ch in self.children]
 
     @property
