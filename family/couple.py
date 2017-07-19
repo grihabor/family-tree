@@ -1,10 +1,14 @@
+from typing import List
+
+from family import Person
 from .node import Node
 
 
 class Couple(Node):
-    def __init__(self, parents):
+    def __init__(self, parents: List[Person]):
         assert len(parents) == 2
-        self.parents = parents if parents[0] < parents[1] else parents[::-1]
+        self._parents = parents if parents[0].id < parents[1].id else parents[::-1]
+        self.parents = [parent.id for parent in parents]
         self.children = []
         super().__init__(
             '_'.join(str(id_) for id_ in self.parents),
@@ -13,7 +17,7 @@ class Couple(Node):
         )
 
     def steps(self):
-        return [(p, 0) for p in self.parents] + [(ch, 1) for ch in self.children]
+        return [(parent.id, (0, - parent.sex_step())) for parent in self._parents] + [(ch, (1, 0)) for ch in self.children]
 
     @property
     def label(self):
