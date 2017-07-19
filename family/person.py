@@ -35,10 +35,11 @@ class Person(Node):
 
     def steps(self):
         edges = []
-        if self.couple_id:
-            edges.append((self.couple_id, (0, self.sex_step())))
         if self.parent_couple_id:
             edges.append((self.parent_couple_id, (-1, 0)))
+        if self.couple_id:
+            edges.append((self.couple_id, (0, self.sex_step())))
+        # Order is important for better visualization
         return edges
 
     @property

@@ -17,6 +17,7 @@ class Couple(Node):
         )
 
     def steps(self):
+        # Order is important for better visualization
         return [(parent.id, (0, - parent.sex_step())) for parent in self._parents] + [(ch, (1, 0)) for ch in self.children]
 
     @property
