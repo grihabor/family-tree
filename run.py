@@ -19,7 +19,6 @@ class GraphNode:
 
 def main():
     data = Data(FILE_JSON)
-    data.place_couples()
 
     graph = dict(
         nodes=[],
