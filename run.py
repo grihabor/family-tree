@@ -32,8 +32,8 @@ def main():
                 id=node.id,
                 label=node.label,
                 type='square',
-                x=x,
-                y=layer_id,
+                x=node.x,
+                y=node.y,
                 color=node.color,
                 size=node.size
             ))
