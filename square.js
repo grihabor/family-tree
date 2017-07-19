@@ -72,7 +72,7 @@ sigma.canvas.nodes.square = function(node, context, settings) {
 
 
 sigma.canvas.labels.square = function(node, context, settings) {
-    // text_renderer(node, context, settings);
+    text_renderer(node, context, settings);
 };
 
 
@@ -80,3 +80,5 @@ sigma.canvas.hovers.square = function(node, context, settings) {
     rect_renderer(node, context, settings);
     text_renderer(node, context, settings);
 };
+
+
