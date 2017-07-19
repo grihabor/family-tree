@@ -3,7 +3,7 @@ sigma.parsers.json(
     'data/graph.json',
     {
         container: 'sigma-container',
-        type: 'canvas'
+        type: sigma.renderers.canvas
     },
     function (s) {}
 );

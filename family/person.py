@@ -30,12 +30,15 @@ class Person(Node):
             else:
                 logger.warning('Unexpected field {}={}'.format(attr_name, value))
 
+    def sex_step(self):
+        return -1 if self.sex == 'male' else 1
+
     def steps(self):
         edges = []
         if self.couple_id:
-            edges.append((self.couple_id, 0))
+            edges.append((self.couple_id, (0, self.sex_step())))
         if self.parent_couple_id:
-            edges.append((self.parent_couple_id, -1))
+            edges.append((self.parent_couple_id, (-1, 0)))
         return edges
 
     @property

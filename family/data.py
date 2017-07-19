@@ -28,7 +28,7 @@ class Data:
                 continue
 
             """ couple -> parents """
-            couple = Couple(person.parents)
+            couple = Couple([persons[parent_id] for parent_id in person.parents])
             if couple.id not in couples:
                 couples[couple.id] = couple
             else:
@@ -58,30 +58,27 @@ class Data:
         self.layers = self._layers_dict()
     
     def walk(self):
-
-        node = next(iter(self.nodes.values()))
-        path = [None]
-        visited = {node.id}
+        """BFS algorithm"""
+        node_list = [next(iter(self.nodes.values()))]
+        visited = {node_list[0].id}
 
         while True:
-            next_node = None
-            for next_node_id, layer_step in node.steps():
-                if next_node_id not in visited:
-                    next_node = self.nodes[next_node_id]
-                    visited.add(next_node.id)
-                    path.append(node.id)
-                    yield node.id, next_node.id, layer_step
-                    break
-            if next_node is None:
-                next_node_id = path.pop()
-                if next_node_id is None:
-                    break
-                next_node = self.nodes[next_node_id]
-            node = next_node
+            next_node_list = []
+            for node in node_list:
+                for next_node_id, layer_step in node.steps():
+                    if next_node_id not in visited:
+                        next_node = self.nodes[next_node_id]
+                        next_node_list.append(next_node)
+                        visited.add(next_node.id)
+                        yield node.id, next_node.id, layer_step
+            if not next_node_list:
+                break
+
+            node_list = next_node_list
 
     def _layers_dict(self):
         layers = defaultdict(list)
-        for node_id, next_node_id, layer_step in self.walk():
+        for node_id, next_node_id, (layer_step_y, layer_step_x) in self.walk():
             node = self.nodes[node_id]
             next_node = self.nodes[next_node_id]
             if next_node.layer is None:
@@ -89,13 +86,21 @@ class Data:
                     """Initialize first node"""
                     node.layer = 0
                     layers[0].append(node.id)
-                next_node_layer = node.layer + layer_step
+                next_node_layer = node.layer + layer_step_y
                 next_node.layer = next_node_layer
-                layers[next_node_layer].append(next_node.id)
+                if layer_step_x >= 0:
+                    layers[next_node_layer].append(next_node.id)
+                else:
+                    layers[next_node_layer].insert(
+                        len(layers[next_node_layer]) - 1,
+                        next_node.id
+                    )
+
             else:
                 raise RuntimeError('Next node layer must be uninitizlied')
 
         return layers
+
 
     def ordered_nodes(self, nodes):
         groups = {}
@@ -133,3 +138,4 @@ class Data:
         for layer_id, nodes in self.layers.items():
             ordered_layers[layer_id] = self.ordered_nodes(nodes)
         self.layers = ordered_layers
+    
