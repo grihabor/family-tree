@@ -6,7 +6,6 @@ import itertools
 from collections import defaultdict
 
 from family.couple import Couple
-from family.node import Node
 from family.person import Person
 
 
@@ -55,32 +54,42 @@ class Data:
                 self.persons.values(), self.couples.values()
             )
         }
-        self.layers = self._layers_dict()
-    
+        self.layers = self._layers_dict(self.nodes)
+        self.place_couples()
+
     def walk(self):
-        """BFS algorithm"""
-        node_list = [next(iter(self.nodes.values()))]
-        visited = {node_list[0].id}
+        yield from self.walk_nodes(self.nodes)
+
+    @classmethod
+    def walk_nodes(cls, nodes):
+        """DFS algorithm"""
+
+        node = next(iter(nodes.values()))
+        path = [None]
+        visited = {node.id}
 
         while True:
-            next_node_list = []
-            for node in node_list:
-                for next_node_id, layer_step in node.steps():
-                    if next_node_id not in visited:
-                        next_node = self.nodes[next_node_id]
-                        next_node_list.append(next_node)
-                        visited.add(next_node.id)
-                        yield node.id, next_node.id, layer_step
-            if not next_node_list:
-                break
+            next_node = None
+            for next_node_id, layer_step in node.steps():
+                if next_node_id not in visited:
+                    next_node = nodes[next_node_id]
+                    visited.add(next_node.id)
+                    path.append(node.id)
+                    yield node.id, next_node.id, layer_step
+                    break
+            if next_node is None:
+                next_node_id = path.pop()
+                if next_node_id is None:
+                    break
+                next_node = nodes[next_node_id]
+            node = next_node
 
-            node_list = next_node_list
-
-    def _layers_dict(self):
+    @classmethod
+    def _layers_dict(cls, nodes):
         layers = defaultdict(list)
-        for node_id, next_node_id, (layer_step_y, layer_step_x) in self.walk():
-            node = self.nodes[node_id]
-            next_node = self.nodes[next_node_id]
+        for node_id, next_node_id, (layer_step_y, layer_step_x) in cls.walk_nodes(nodes):
+            node = nodes[node_id]
+            next_node = nodes[next_node_id]
             if next_node.layer is None:
                 if node.layer is None:
                     """Initialize first node"""
@@ -103,6 +112,7 @@ class Data:
 
 
     def ordered_nodes(self, nodes):
+        """Order node layer for better layout"""
         groups = {}
         ordered = []
         for node_id in nodes:
@@ -134,6 +144,7 @@ class Data:
         return ordered
 
     def place_couples(self):
+        """Move nodes around inside each layer for better layout"""
         ordered_layers = {}
         for layer_id, nodes in self.layers.items():
             ordered_layers[layer_id] = self.ordered_nodes(nodes)
