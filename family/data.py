@@ -26,7 +26,10 @@ def longest_layer_id(layers):
 def shift_to_middle(nodes, layers):
     longest_layer = layers[longest_layer_id(layers)]
     for layer_id, layer in layers.items():
+        # TODO: continue here
         pass
+
+    return layers
 
 
 def apply_coords(nodes, layers):
@@ -206,15 +209,9 @@ def ordered_nodes(nodes_to_order, nodes):
     return ordered
 
 
-def guarantee_layers_nice_placement(nodes):
-    """Choose start node for walk_nodes from the last layer"""
-    layers = _layers_dict(nodes)
-    last_layer_key = max(layers.keys())
-    start_node_id = layers[last_layer_key][-1]
-    start_node = nodes[start_node_id]
-    print('Use {} as start node'.format(start_node))
-    clear_nodes_layer(nodes)
-    return _layers_dict(nodes, start_node=start_node)
+def guarantee_layers_nice_placement(nodes, layers):
+    # TODO: continue here
+    return layers
 
 
 def ordered_layers(layers, nodes):
@@ -237,8 +234,11 @@ class Data:
             self.persons.values(), self.couples.values()
         )}
         layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
-        self.layers = ordered_layers(layers, self.nodes)
-        apply_coords(self.nodes, self.layers)
+        layers = ordered_layers(layers, self.nodes)
+        apply_coords(self.nodes, layers)
+        layers = guarantee_layers_nice_placement(self.nodes, layers)
+        layers = shift_to_middle(self.nodes, layers)
+        self.layers = layers
 
     def walk(self):
         yield from walk_nodes(self.nodes)
