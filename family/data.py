@@ -19,10 +19,21 @@ class Layer(list):
     pass
 
 
+def longest_layer_id(layers):
+    return max(layers, key=lambda x: len(layers[x]))
+
+
+def shift_to_middle(nodes, layers):
+    longest_layer = layers[longest_layer_id(layers)]
+    for layer_id, layer in layers.items():
+        pass
+
+
 def apply_coords(nodes, layers):
 
-    def set_node_x_coord(node, x, layer_id):
-        layer = layers[layer_id]
+    def set_node_x_coord(node_to_insert, calculated_x, layer_id):
+        layer_to_insert_to = layers[layer_id]
+
         def _set_node_x_coord(node, x, layer):
             if not hasattr(layer, 'by_coord'):
                 layer.by_coord = {}
@@ -50,13 +61,11 @@ def apply_coords(nodes, layers):
                 node = temp_node
                 x = next_x
 
-        _set_node_x_coord(node, x, layer)
-        for x, node_id in layer.by_coord.items():
-            nodes[node_id].x = x
+        _set_node_x_coord(node_to_insert, calculated_x, layer_to_insert_to)
+        for calculated_x, node_id_ in layer_to_insert_to.by_coord.items():
+            nodes[node_id_].x = calculated_x
 
-
-    longest_layer_key = max(layers, key=lambda x: len(layers[x]))
-    longest_layer = layers[longest_layer_key]
+    longest_layer = layers[longest_layer_id(layers)]
     for x, node_id in enumerate(longest_layer):
         node = nodes[node_id]
         node.x = x
@@ -232,7 +241,7 @@ class Data:
             self.persons.values(), self.couples.values()
         )
         }
-        layers = guarantee_layers_nice_placement(self.nodes)
+        layers = _layers_dict(self.nodes) # guarantee_layers_nice_placement(self.nodes)
         self.layers = ordered_layers(layers, self.nodes)
         apply_coords(self.nodes, self.layers)
 
