@@ -20,6 +20,7 @@ def apply_coords(nodes, layers):
     for x, node_id in enumerate(longest_layer):
         node = nodes[node_id]
         node.x = x
+        node.y = 0
     
     start_node = nodes[longest_layer[0]]
     for src, dst, layer_step in walk_nodes(nodes, start_node=start_node):

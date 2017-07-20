@@ -1,5 +1,6 @@
 import json
 
+from family import Person
 from family.data import Data
 import os
 
@@ -31,7 +32,7 @@ def main():
             graph['nodes'].append(dict(
                 id=node.id,
                 label=node.label,
-                type='square',
+                type='square' if type(node) == Person else None,
                 x=node.x,
                 y=node.y,
                 color=node.color,
