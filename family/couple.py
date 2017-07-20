@@ -1,6 +1,7 @@
 from typing import List
 
 from family import Person
+from family.colors import COLOR_COUPLE_NODE
 from .node import Node
 
 
@@ -12,7 +13,7 @@ class Couple(Node):
         self.children = []
         super().__init__(
             '_'.join(str(id_) for id_ in self.parents),
-            color="rgb(200,130,100)",
+            color=COLOR_COUPLE_NODE,
             size=1
         )
 

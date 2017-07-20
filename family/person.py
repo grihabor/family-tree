@@ -1,5 +1,6 @@
 import logging
 
+from family.colors import COLOR_PERSON_NODE
 from .node import Node
 
 logger = logging.getLogger(__name__)
@@ -10,7 +11,7 @@ class Person(Node):
         assert 'id' in data
         super().__init__(
             data['id'],
-            color="rgb(100,130,200)",
+            color=COLOR_PERSON_NODE,
             size=3
         )
 

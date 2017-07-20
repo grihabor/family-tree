@@ -65,16 +65,12 @@ text_renderer = function(node, context, settings) {
 };
 
 
-
 sigma.canvas.nodes.square = function(node, context, settings) {
     rect_renderer(node, context, settings);
 };
 
 
-sigma.canvas.labels.square = function(node, context, settings) {
-    text_renderer(node, context, settings);
-};
-
+sigma.canvas.labels.square = get_canvas_labels();
 
 sigma.canvas.hovers.square = function(node, context, settings) {
     rect_renderer(node, context, settings);
