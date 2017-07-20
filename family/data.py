@@ -14,6 +14,25 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+def apply_coords(nodes, layers):
+    longest_layer_key = max(layers, key=lambda x: len(layers[x]))
+    longest_layer = layers[longest_layer_key]
+    for x, node_id in enumerate(longest_layer):
+        node = nodes[node_id]
+        node.x = x
+    
+    start_node = nodes[longest_layer[0]]
+    for src, dst, layer_step in walk_nodes(nodes, start_node=start_node):
+        src_node = nodes[src]
+        assert src_node.x is not None
+        assert src_node.y is not None
+        dst_node = nodes[dst]
+        if dst_node.y is None:
+            dst_node.y = src_node.y + layer_step[0]
+        if dst_node.x is None:
+            dst_node.x = src_node.x + layer_step[1]
+
+
 def _persons_dict(data) -> Dict[int, Person]:
     persons = {}
 
@@ -171,6 +190,7 @@ class Data:
         }
         layers = guarantee_layers_nice_placement(self.nodes)
         self.layers = ordered_layers(layers, self.nodes)
+        apply_coords(self.nodes, self.layers)
 
     def walk(self):
         yield from walk_nodes(self.nodes)
