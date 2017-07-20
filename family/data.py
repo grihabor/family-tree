@@ -30,7 +30,6 @@ def shift_to_middle(nodes, layers):
 
 
 def apply_coords(nodes, layers):
-
     def set_node_x_coord(node_to_insert, calculated_x, layer_id):
         layer_to_insert_to = layers[layer_id]
 
@@ -70,7 +69,7 @@ def apply_coords(nodes, layers):
         node = nodes[node_id]
         node.x = x
         node.y = 0
-    
+
     start_node = nodes[longest_layer[0]]
     for src, dst, layer_step in walk_nodes(nodes, start_node=start_node):
         src_node = nodes[src]
@@ -143,7 +142,6 @@ def walk_nodes(nodes, *, start_node=None):
 
 
 def _layers_dict(nodes, *, start_node=None):
-
     layers = defaultdict(Layer)
     for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(nodes, start_node=start_node):
         node = nodes[node_id]
@@ -167,13 +165,12 @@ def _layers_dict(nodes, *, start_node=None):
                 next_node.id
             )
 
-
     return layers
+
 
 def clear_nodes_layer(nodes):
     for node in nodes.values():
         node.layer = None
-
 
 
 def ordered_nodes(nodes_to_order, nodes):
@@ -236,12 +233,10 @@ class Data:
 
         self.persons = _persons_dict(data)
         self.couples = _couples_dict(self.persons)
-        self.nodes = {
-            node.id: node for node in itertools.chain(
+        self.nodes = {node.id: node for node in itertools.chain(
             self.persons.values(), self.couples.values()
-        )
-        }
-        layers = _layers_dict(self.nodes) # guarantee_layers_nice_placement(self.nodes)
+        )}
+        layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
         self.layers = ordered_layers(layers, self.nodes)
         apply_coords(self.nodes, self.layers)
 
