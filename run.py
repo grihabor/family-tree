@@ -26,6 +26,8 @@ def main():
         edges=[],
     )
 
+    layers_layout = True
+
     for layer_id, node_list in data.layers.items():
         for x, node_id in enumerate(node_list):
             node = data.nodes[node_id]
@@ -33,8 +35,8 @@ def main():
                 id=node.id,
                 label=node.label,
                 type='square' if type(node) == Person else None,
-                x=node.x,
-                y=node.y,
+                x=x if layers_layout else node.x,
+                y=node.layer if layers_layout else node.y,
                 color=node.color,
                 size=node.size
             ))
