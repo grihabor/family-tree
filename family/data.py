@@ -1,4 +1,5 @@
 import json
+import random
 from typing import Dict
 
 import itertools
@@ -14,7 +15,46 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+class Layer(list):
+    pass
+
+
 def apply_coords(nodes, layers):
+
+    def set_node_x_coord(node, x, layer_id):
+        layer = layers[layer_id]
+        def _set_node_x_coord(node, x, layer):
+            if not hasattr(layer, 'by_coord'):
+                layer.by_coord = {}
+            if x not in layer.by_coord:
+                layer.by_coord[x] = node.id
+                return
+
+            # Shift nodes until everything is ok
+
+            direction = random.randint(0, 1)
+            if direction == 0:
+                direction = -1
+
+            while True:
+                next_node = nodes[layer.by_coord[x]]
+                next_x = x + direction
+                if next_x not in layer.by_coord:
+                    # if next_x is empty
+                    layer.by_coord[next_x] = next_node.id
+                    layer.by_coord[x] = node.id
+                    return
+
+                temp_node = nodes[layer.by_coord[x]]
+                layer.by_coord[x] = node.id
+                node = temp_node
+                x = next_x
+
+        _set_node_x_coord(node, x, layer)
+        for x, node_id in layer.by_coord.items():
+            nodes[node_id].x = x
+
+
     longest_layer_key = max(layers, key=lambda x: len(layers[x]))
     longest_layer = layers[longest_layer_key]
     for x, node_id in enumerate(longest_layer):
@@ -30,8 +70,10 @@ def apply_coords(nodes, layers):
         dst_node = nodes[dst]
         if dst_node.y is None:
             dst_node.y = src_node.y + layer_step[0]
+
+        layer = dst_node.layer
         if dst_node.x is None:
-            dst_node.x = src_node.x + layer_step[1]
+            set_node_x_coord(dst_node, src_node.x + layer_step[1], layer)
 
 
 def _persons_dict(data) -> Dict[int, Person]:
@@ -92,7 +134,8 @@ def walk_nodes(nodes, *, start_node=None):
 
 
 def _layers_dict(nodes, *, start_node=None):
-    layers = defaultdict(list)
+
+    layers = defaultdict(Layer)
     for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(nodes, start_node=start_node):
         node = nodes[node_id]
         next_node = nodes[next_node_id]
@@ -127,7 +170,7 @@ def clear_nodes_layer(nodes):
 def ordered_nodes(nodes_to_order, nodes):
     """Order node layer for better layout"""
     groups = {}
-    ordered = []
+    ordered = Layer()
     for node_id in nodes_to_order:
         node = nodes[node_id]
         if type(node) == Couple:
