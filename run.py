@@ -1,6 +1,7 @@
 import json
 
 from family import Person
+from family.colors import COLOR_PARENTS_EDGE, COLOR_CHILDREN_EDGE
 from family.data import Data
 import os
 
@@ -26,7 +27,7 @@ def main():
         edges=[],
     )
 
-    layers_layout = True
+    layers_layout = False
 
     for layer_id, node_list in data.layers.items():
         for x, node_id in enumerate(node_list):
@@ -41,11 +42,12 @@ def main():
                 size=node.size
             ))
 
-    for edge_id, (src, dst, _) in enumerate(data.walk()):
+    for edge_id, (src, dst, (layer_step_y, _)) in enumerate(data.walk()):
         graph['edges'].append(dict(
             id='edge_{}'.format(edge_id),
             source=src,
-            target=dst
+            target=dst,
+            color=COLOR_PARENTS_EDGE if layer_step_y == 0 else COLOR_CHILDREN_EDGE
         ))
 
     with open(GRAPH_JSON, 'w') as f:
