@@ -1,4 +1,5 @@
 
+
 rect_renderer = function(node, context, settings) {
     context.save();
     // declarations
@@ -65,18 +66,8 @@ text_renderer = function(node, context, settings) {
 };
 
 
-sigma.canvas.nodes.square = function(node, context, settings) {
-    rect_renderer(node, context, settings);
-};
-
-
+sigma.canvas.nodes.square = get_canvas_nodes();
 sigma.canvas.labels.square = get_canvas_labels();
-
-sigma.canvas.hovers.square = function(node, context, settings) {
-    rect_renderer(node, context, settings);
-    text_renderer(node, context, settings);
-};
-
 sigma.canvas.hovers.square = get_canvas_hovers();
 
 
