@@ -1,4 +1,4 @@
-sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+sigma.classes.graph.addMethod('neighbors', function (nodeId) {
     var k,
         j,
         index2,
@@ -24,14 +24,14 @@ sigma.parsers.json(
             labelThreshold: 12
         }
     },
-    function(s) {
+    function (s) {
         // We first need to save the original colors of our 
         // nodes and edges, like this: 
 
-        s.graph.nodes().forEach(function(n) {
+        s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
         });
-        s.graph.edges().forEach(function(e) {
+        s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
         });
 
@@ -43,17 +43,17 @@ sigma.parsers.json(
         // We do the same for the edges, and we only keep 
         // edges that have both extremities colored. 
 
-        s.bind('clickNode', function(e) {
+        s.bind('clickNode', function (e) {
             var nodeId = e.data.node.id,
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
-            s.graph.nodes().forEach(function(n) {
+            s.graph.nodes().forEach(function (n) {
                 if (toKeep[n.id])
                     n.color = n.originalColor;
                 else n.color = '#eee';
             });
 
-            s.graph.edges().forEach(function(e) {
+            s.graph.edges().forEach(function (e) {
                 if (toKeep[e.source] && toKeep[e.target])
                     e.color = e.originalColor;
                 else
@@ -66,11 +66,11 @@ sigma.parsers.json(
             s.refresh();
         });
 
-        s.bind('clickStage', function(e) {
-            s.graph.nodes().forEach(function(n) {
+        s.bind('clickStage', function (e) {
+            s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
             });
-            s.graph.edges().forEach(function(e) {
+            s.graph.edges().forEach(function (e) {
                 e.color = e.originalColor;
             });
 
