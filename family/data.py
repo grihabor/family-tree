@@ -9,6 +9,7 @@ from collections import defaultdict
 import logging
 
 from family.couple import Couple
+from family.node import Node
 from family.person import Person
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,9 @@ logger.setLevel(logging.INFO)
 
 
 class Layer(list):
-    pass
+    def __init__(self, iterable=None):
+        self.by_coord = {}
+        super().__init__(iterable if iterable is not None else [])
 
 
 def longest_layer_id(layers):
@@ -32,13 +35,11 @@ def shift_to_middle(nodes, layers):
     return layers
 
 
-def apply_coords(nodes, layers):
+def apply_coords(nodes, layers: Dict[int, Layer]):
     def set_node_x_coord(node_to_insert, calculated_x, layer_id):
         layer_to_insert_to = layers[layer_id]
 
         def _set_node_x_coord(node, x, layer):
-            if not hasattr(layer, 'by_coord'):
-                layer.by_coord = {}
             if x not in layer.by_coord:
                 layer.by_coord[x] = node.id
                 return
@@ -72,6 +73,7 @@ def apply_coords(nodes, layers):
         node = nodes[node_id]
         node.x = x
         node.y = 0
+        longest_layer.by_coord[x] = node.id
 
     start_node = nodes[longest_layer[0]]
     for src, dst, layer_step in walk_nodes(nodes, start_node=start_node):
@@ -209,8 +211,42 @@ def ordered_nodes(nodes_to_order, nodes):
     return ordered
 
 
-def guarantee_layers_nice_placement(nodes, layers):
-    # TODO: continue here
+def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
+
+    def move(parent: Node, move_direction: int):
+        layer = layers[parent.layer]
+
+        if parent.x + move_direction in layer.by_coord:
+            temp_id = layer.by_coord[parent.x + move_direction]
+            temp = nodes[temp_id]
+            temp.x = parent.x
+            layer.by_coord[parent.x] = temp.id
+        else:
+            del layer.by_coord[parent.x]
+
+        layer.by_coord[parent.x + move_direction] = parent.id
+        parent.x += move_direction
+
+
+    def move_until(couple, parent, step):
+        while True:
+            if couple.x + step == parent.x:
+                return
+
+            move_direction = step if (couple.x < parent.x) != (step == 1) else -step
+            move(parent, move_direction)
+
+    for layer_id, layer in layers.items():
+        for node_id in layer:
+            couple = nodes[node_id]
+            if type(couple) != Couple:
+                continue
+
+            for parent_id in couple.parents:
+                parent = nodes[parent_id]
+                step = parent.sex_step()
+                move_until(couple, parent, -step)
+
     return layers
 
 
@@ -234,10 +270,11 @@ class Data:
             self.persons.values(), self.couples.values()
         )}
         layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
-        layers = ordered_layers(layers, self.nodes)
+        # layers = ordered_layers(layers, self.nodes)
         apply_coords(self.nodes, layers)
+        # layers = ordered_layers(layers, self.nodes)
         layers = guarantee_layers_nice_placement(self.nodes, layers)
-        layers = shift_to_middle(self.nodes, layers)
+        # layers = shift_to_middle(self.nodes, layers)
         self.layers = layers
 
     def walk(self):
