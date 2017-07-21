@@ -25,13 +25,13 @@ sigma.parsers.json(
         }
     },
     function (s) {
+
+        var original_state = true;
         // We first need to save the original colors of our 
         // nodes and edges, like this: 
 
         s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
-            n.target_x = n.x;
-            n.target_y = 1 - n.y;
         });
         s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
@@ -50,9 +50,24 @@ sigma.parsers.json(
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
             s.graph.nodes().forEach(function (n) {
-                if (toKeep[n.id])
+                var angle=Math.random() * 100,
+                    radius=2.,
+                    node=e.data.node;
+
+                if (original_state) {
+                    n.prev_x = n.x;
+                    n.prev_y = n.y;
+                }
+
+                if (toKeep[n.id]) {
                     n.color = n.originalColor;
-                else n.color = '#eee';
+                    n.target_x = n.x;
+                    n.target_y = n.y;
+                } else {
+                    n.color = '#eee';
+                    n.target_x = node.x + radius * Math.cos(angle);
+                    n.target_y = node.y + radius * Math.sin(angle);
+                }
             });
 
             s.graph.edges().forEach(function (e) {
@@ -67,6 +82,7 @@ sigma.parsers.json(
             // update effective. 
             s.refresh();
 
+
             sigma.plugins.animate(
                 s,
                 {
@@ -78,14 +94,26 @@ sigma.parsers.json(
         });
 
         s.bind('clickStage', function (e) {
+            original_state = 0;
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
+                n.target_y = n.prev_y;
+                n.target_x = n.prev_x;
             });
             s.graph.edges().forEach(function (e) {
                 e.color = e.originalColor;
             });
 
             s.refresh();
+
+            sigma.plugins.animate(
+                s,
+                {
+                    x: 'target_x',
+                    y: 'target_y'
+                },
+                2000
+            );
         });
     }
 );
