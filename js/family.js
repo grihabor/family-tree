@@ -14,6 +14,21 @@ sigma.classes.graph.addMethod('neighbors', function (nodeId) {
     return neighbors;
 });
 
+
+
+function calculate_target_coords(node, centerNodeId, toKeep){
+    var coords = {};
+    coords.x = node.x;
+    coords.y = node.y;
+    return coords;
+}
+
+
+function get_label_threshold() {
+    return 12;
+}
+
+
 sigma.parsers.json(
     'data/graph.json', {
         renderers: [{
@@ -21,7 +36,7 @@ sigma.parsers.json(
             type: sigma.renderers.canvas
         }],
         settings: {
-            labelThreshold: 12
+            labelThreshold: get_label_threshold()
         }
     },
     function (s) {
@@ -32,6 +47,8 @@ sigma.parsers.json(
 
         s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
+            n.prev_x = n.x;
+            n.prev_y = n.y;
         });
         s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
@@ -46,23 +63,23 @@ sigma.parsers.json(
         // edges that have both extremities colored. 
 
         s.bind('clickNode', function (e) {
-            var nodeId = e.data.node.id,
+            var target,
+                nodeId = e.data.node.id,
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
             s.graph.nodes().forEach(function (n) {
-                var angle=Math.random() * 100,
-                    radius=2.,
+                var angle=Math.random() * 314,
+                    radius=5.,
                     node=e.data.node;
-
-                if (original_state) {
-                    n.prev_x = n.x;
-                    n.prev_y = n.y;
-                }
 
                 if (toKeep[n.id]) {
                     n.color = n.originalColor;
+
+                    target = calculate_target_coords(n, nodeId, toKeep);
+
                     n.target_x = n.x;
                     n.target_y = n.y;
+
                 } else {
                     n.color = '#eee';
                     n.target_x = node.x + radius * Math.cos(angle);
@@ -94,6 +111,9 @@ sigma.parsers.json(
         });
 
         s.bind('clickStage', function (e) {
+
+            console.log(e);
+
             original_state = 0;
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
