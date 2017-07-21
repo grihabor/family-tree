@@ -1,40 +1,74 @@
 
-// shared between labels and hovers
+function get_label_size(context, node, size, fontSize) {
+    var i,
+        label_size,
+        label_line,
+        textWidth,
+        maxTextWidth = 0,
+        label_lines = node.label.split(' ');
+
+    
+
+    for (i in label_lines) {
+        label_line = label_lines[i];
+        textWidth = context.measureText(label_line).width;
+        if (maxTextWidth < textWidth) {
+            maxTextWidth = textWidth;
+        }
+    }
+
+    label_size = {};
+    label_size.width = maxTextWidth;
+    label_size.line_height = fontSize * 1.2;
+    label_size.height = label_lines.length * label_size.line_height;
+    label_size.height_offset = size * 2;
+    return label_size;
+}
+
+function get_rect(context, node, prefix, size, fontSize) {
+    var rect = {},
+        label_size = get_label_size(context, node, size, fontSize);
+
+    rect.width = label_size.width * 1.2;
+    rect.height = label_size.height + fontSize * 0.6;
+    rect.x = node[prefix + 'x'] - rect.width / 2;
+    rect.y = node[prefix + 'y'] + label_size.height_offset - fontSize * 1.2;
+    return rect;
+}
+
+
 function default_fill_text(context, node, prefix, size, fontSize) {
+    context.fillText(
+        node.label,
+        Math.round(node[prefix + 'x'] + size + 3),
+        Math.round(node[prefix + 'y'] + fontSize / 3)
+    );
+}
+
+function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
+    var i,
+        label_line,
+        label_lines = node.label.split(' '),
+        label_size = get_label_size(context, node, size, fontSize);
+
+    context.textAlign = 'center';
+
+    for (i in label_lines) {
+        label_line = label_lines[i];
+
         context.fillText(
-            node.label,
-            Math.round(node[prefix + 'x'] + size + 3),
-            Math.round(node[prefix + 'y'] + fontSize / 3)
+            label_line,
+            Math.round(node[prefix + 'x']),
+            Math.round(node[prefix + 'y'] + label_size.height_offset
+                + label_size.line_height * parseInt(i))
         );
     }
 
-function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
-        var i,
-            label_line,
-            maxTextWidth = 0,
-            label_lines = node.label.split(' ');
+    node.labelWidth = label_size.width; // important for clicks
+}
 
-        context.textAlign = 'center';
-
-        for (i in label_lines) {
-            label_line = label_lines[i];
-            context.fillText(
-                label_line,
-                Math.round(node[prefix + 'x']),
-                Math.round(node[prefix + 'y'] + size * 2 + fontSize * 1.2 * parseInt(i))
-            );
-            textWidth = context.measureText(label_line).width;
-            if (maxTextWidth < textWidth) {
-                maxTextWidth = textWidth;
-            }
-        }
-
-        node.labelWidth = maxTextWidth; // important for clicks
-    }
-    
-    
 function get_canvas_labels() {
-    
+
     var fill_text = centered_multiline_fill_text;
 
     return function (node, context, settings) {
@@ -110,40 +144,64 @@ function default_shadow(context, node, prefix, size, fontSize) {
 }
 
 
+
+
 function centered_shadow(context, node, prefix, size, fontSize) {
     var x,
         y,
-        w,
-        h,
-        radius;
-        
-    radius = Math.round(fontSize / 2 + 2);
-    h = Math.round(fontSize + 4);
-    
-    x = Math.round(node[prefix + 'x']);
-    y = Math.round(node[prefix + 'y'] - radius);
-    w = Math.round(
-                context.measureText(node.label).width + fontSize / 2 + size + 7
-            );
-    
-    
+        grid_x,
+        grid_y,
+        diameter,
+        radius,
+        rect = get_rect(context, node, prefix, size, fontSize);
 
-            context.moveTo(x, y);  // upmost point
-            context.arcTo(x + radius, y, 
-                          x + radius, y + radius, radius);  // quarter of circle to the right of the node circle
-            context.lineTo(x + radius, y + w);
-            context.lineTo(x + w, y + h);
-            context.lineTo(x + e, y + h);
-            context.arcTo(x, y + h, x, y + h - e, e);
-            context.lineTo(x, y + e);
+    diameter = fontSize + 4;
+    radius = diameter / 2;
+    x = node[prefix + 'x'];
+    y = node[prefix + 'y'];
+
+
+    grid_x = [
+        Math.round(x - rect.width / 2),
+        Math.round(x - radius),
+        Math.round(x),
+        Math.round(x + radius),
+        Math.round(x + rect.width / 2)
+    ];
+    grid_y = [
+        Math.round(y - radius),
+        Math.round(y),
+        Math.round(rect.y),
+        Math.round(rect.y + rect.height)
+    ];
+    radius = Math.round(radius);
+
+
+    context.moveTo(grid_x[2], grid_y[0]);
+    context.arcTo(
+        grid_x[3], grid_y[0],
+        grid_x[3], grid_y[1],
+        radius
+    );
+    context.lineTo(grid_x[3], grid_y[2]);
+    context.lineTo(grid_x[4], grid_y[2]);
+    context.lineTo(grid_x[4], grid_y[3]);
+    context.lineTo(grid_x[0], grid_y[3]);
+    context.lineTo(grid_x[0], grid_y[2]);
+    context.lineTo(grid_x[1], grid_y[2]);
+    context.lineTo(grid_x[1], grid_y[1]);
+    context.arcTo(
+        grid_x[1], grid_y[0],
+        grid_x[2], grid_y[0],
+        radius
+    );
 }
 
 
 function get_canvas_hovers() {
-    
     var fill_text = centered_multiline_fill_text;
     var custom_shadow = centered_shadow;
-    
+   
     return function (node, context, settings) {
         var fontStyle = settings('hoverFontStyle') || settings('fontStyle'),
             prefix = settings('prefix') || '',
@@ -199,7 +257,7 @@ function get_canvas_hovers() {
 
         // Node:
         var nodeRenderer = sigma.canvas.nodes[node.type] || sigma.canvas.nodes.def;
-        nodeRenderer(node, context, settings);
+        // nodeRenderer(node, context, settings);
 
         // Display the label:
         if (node.label && typeof node.label === 'string') {

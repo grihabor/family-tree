@@ -18,8 +18,13 @@ sigma.classes.graph.addMethod('neighbors', function(nodeId) {
 sigma.parsers.json(
     'data/graph.json',
     {
-        container: 'sigma-container',
-        type: sigma.renderers.canvas
+        renderers: [{
+            container: 'sigma-container',
+            type: sigma.renderers.canvas
+        }],
+        settings: {
+            labelThreshold: 12
+        }
     },
     function (s) {
         // We first need to save the original colors of our 
