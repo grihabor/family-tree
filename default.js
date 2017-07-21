@@ -6,7 +6,7 @@ function get_label_size(context, node, size, fontSize) {
         maxTextWidth = 0,
         label_lines = node.label.split(' ');
 
-    context.textAlign = 'center';
+
 
     for (i in label_lines) {
         label_line = label_lines[i];
@@ -54,23 +54,23 @@ function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
 
     for (i in label_lines) {
         label_line = label_lines[i];
+
         context.fillText(
             label_line,
             Math.round(node[prefix + 'x']),
-            Math.round(node[prefix + 'y'] + label_size.height_offset
-                + label_size.line_height * parseInt(i))
+            Math.round(node[prefix + 'y'] + label_size.height_offset +
+                label_size.line_height * parseInt(i))
         );
     }
 
     node.labelWidth = label_size.width; // important for clicks
 }
 
-
 function get_canvas_labels() {
 
     var fill_text = centered_multiline_fill_text;
 
-    return function (node, context, settings) {
+    return function(node, context, settings) {
         var fontSize,
             prefix = settings('prefix') || '',
             size = node[prefix + 'size'];
@@ -99,7 +99,7 @@ function get_canvas_labels() {
 
 
 function get_canvas_nodes() {
-    return function (node, context, settings) {
+    return function(node, context, settings) {
         var prefix = settings('prefix') || '';
 
         context.fillStyle = node.color || settings('defaultNodeColor');
@@ -133,14 +133,16 @@ function default_shadow(context, node, prefix, size, fontSize) {
     h = Math.round(fontSize + 4);
     e = Math.round(fontSize / 2 + 2);
 
-    context.moveTo(x, y + e);  // leftmost point
-    context.arcTo(x, y, x + e, y, e);  // quarter of circle to the top of the node circle
+    context.moveTo(x, y + e); // leftmost point
+    context.arcTo(x, y, x + e, y, e); // quarter of circle to the top of the node circle
     context.lineTo(x + w, y);
     context.lineTo(x + w, y + h);
     context.lineTo(x + e, y + h);
     context.arcTo(x, y + h, x, y + h - e, e);
     context.lineTo(x, y + e);
 }
+
+
 
 
 function centered_shadow(context, node, prefix, size, fontSize) {
@@ -196,17 +198,16 @@ function centered_shadow(context, node, prefix, size, fontSize) {
 
 
 function get_canvas_hovers() {
-
     var fill_text = centered_multiline_fill_text;
     var custom_shadow = centered_shadow;
 
-    return function (node, context, settings) {
+    return function(node, context, settings) {
         var fontStyle = settings('hoverFontStyle') || settings('fontStyle'),
             prefix = settings('prefix') || '',
             size = node[prefix + 'size'],
             fontSize = (settings('labelSize') === 'fixed') ?
-                settings('defaultLabelSize') :
-                settings('labelSizeRatio') * size;
+            settings('defaultLabelSize') :
+            settings('labelSizeRatio') * size;
 
         // Label background:
         context.font = (fontStyle ? fontStyle + ' ' : '') +
@@ -267,4 +268,3 @@ function get_canvas_hovers() {
         }
     };
 }
-
