@@ -1,40 +1,39 @@
-
 // shared between labels and hovers
 function default_fill_text(context, node, prefix, size, fontSize) {
-        context.fillText(
-            node.label,
-            Math.round(node[prefix + 'x'] + size + 3),
-            Math.round(node[prefix + 'y'] + fontSize / 3)
-        );
-    }
+    context.fillText(
+        node.label,
+        Math.round(node[prefix + 'x'] + size + 3),
+        Math.round(node[prefix + 'y'] + fontSize / 3)
+    );
+}
 
 function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
-        var i,
+    var i,
+        label_line,
+        maxTextWidth = 0,
+        label_lines = node.label.split(' ');
+
+    context.textAlign = 'center';
+
+    for (i in label_lines) {
+        label_line = label_lines[i];
+        context.fillText(
             label_line,
-            maxTextWidth = 0,
-            label_lines = node.label.split(' ');
-
-        context.textAlign = 'center';
-
-        for (i in label_lines) {
-            label_line = label_lines[i];
-            context.fillText(
-                label_line,
-                Math.round(node[prefix + 'x']),
-                Math.round(node[prefix + 'y'] + size * 2 + fontSize * 1.2 * parseInt(i))
-            );
-            textWidth = context.measureText(label_line).width;
-            if (maxTextWidth < textWidth) {
-                maxTextWidth = textWidth;
-            }
+            Math.round(node[prefix + 'x']),
+            Math.round(node[prefix + 'y'] + size * 2 + fontSize * 1.2 * parseInt(i))
+        );
+        textWidth = context.measureText(label_line).width;
+        if (maxTextWidth < textWidth) {
+            maxTextWidth = textWidth;
         }
-
-        node.labelWidth = maxTextWidth; // important for clicks
     }
-    
-    
+
+    node.labelWidth = maxTextWidth; // important for clicks
+}
+
+
 function get_canvas_labels() {
-    
+
     var fill_text = centered_multiline_fill_text;
 
     return function (node, context, settings) {
@@ -91,22 +90,22 @@ function default_shadow(context, node, prefix, size, fontSize) {
         w,
         h,
         e;
-        
+
     x = Math.round(node[prefix + 'x'] - fontSize / 2 - 2);
     y = Math.round(node[prefix + 'y'] - fontSize / 2 - 2);
     w = Math.round(
-                context.measureText(node.label).width + fontSize / 2 + size + 7
-            );
+        context.measureText(node.label).width + fontSize / 2 + size + 7
+    );
     h = Math.round(fontSize + 4);
     e = Math.round(fontSize / 2 + 2);
 
-            context.moveTo(x, y + e);  // leftmost point
-            context.arcTo(x, y, x + e, y, e);  // quarter of circle to the top of the node circle
-            context.lineTo(x + w, y);
-            context.lineTo(x + w, y + h);
-            context.lineTo(x + e, y + h);
-            context.arcTo(x, y + h, x, y + h - e, e);
-            context.lineTo(x, y + e);
+    context.moveTo(x, y + e);  // leftmost point
+    context.arcTo(x, y, x + e, y, e);  // quarter of circle to the top of the node circle
+    context.lineTo(x + w, y);
+    context.lineTo(x + w, y + h);
+    context.lineTo(x + e, y + h);
+    context.arcTo(x, y + h, x, y + h - e, e);
+    context.lineTo(x, y + e);
 }
 
 
@@ -116,34 +115,33 @@ function centered_shadow(context, node, prefix, size, fontSize) {
         w,
         h,
         radius;
-        
+
     radius = Math.round(fontSize / 2 + 2);
     h = Math.round(fontSize + 4);
-    
+
     x = Math.round(node[prefix + 'x']);
     y = Math.round(node[prefix + 'y'] - radius);
     w = Math.round(
-                context.measureText(node.label).width + fontSize / 2 + size + 7
-            );
-    
-    
+        context.measureText(node.label).width + fontSize / 2 + size + 7
+    );
 
-            context.moveTo(x, y);  // upmost point
-            context.arcTo(x + radius, y, 
-                          x + radius, y + radius, radius);  // quarter of circle to the right of the node circle
-            context.lineTo(x + radius, y + w);
-            context.lineTo(x + w, y + h);
-            context.lineTo(x + e, y + h);
-            context.arcTo(x, y + h, x, y + h - e, e);
-            context.lineTo(x, y + e);
+
+    context.moveTo(x, y);  // upmost point
+    context.arcTo(x + radius, y,
+        x + radius, y + radius, radius);  // quarter of circle to the right of the node circle
+    context.lineTo(x + radius, y + w);
+    context.lineTo(x + w, y + h);
+    context.lineTo(x + e, y + h);
+    context.arcTo(x, y + h, x, y + h - e, e);
+    context.lineTo(x, y + e);
 }
 
 
 function get_canvas_hovers() {
-    
+
     var fill_text = centered_multiline_fill_text;
     var custom_shadow = centered_shadow;
-    
+
     return function (node, context, settings) {
         var fontStyle = settings('hoverFontStyle') || settings('fontStyle'),
             prefix = settings('prefix') || '',
