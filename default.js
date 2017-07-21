@@ -113,27 +113,36 @@ function centered_shadow(context, node, prefix, size, fontSize) {
     var x,
         y,
         w,
-        h,
+        diameter,
         radius;
 
-    radius = Math.round(fontSize / 2 + 2);
-    h = Math.round(fontSize + 4);
+    diameter = fontSize + 4;
+    radius = diameter / 2;
+    x = node[prefix + 'x'];
+    y = node[prefix + 'y'] - radius;
+    w = context.measureText(node.label).width + fontSize / 2 + size + 7;
 
-    x = Math.round(node[prefix + 'x']);
-    y = Math.round(node[prefix + 'y'] - radius);
-    w = Math.round(
-        context.measureText(node.label).width + fontSize / 2 + size + 7
+    x = Math.round(x);
+    y = Math.round(y);
+    w = Math.round(w);
+    radius = Math.round(radius);
+    diameter = Math.round(diameter);
+
+
+    context.moveTo(x, y);
+    context.arcTo(
+        x + radius, y,
+        x + radius, y + radius,
+        radius
     );
-
-
-    context.moveTo(x, y);  // upmost point
-    context.arcTo(x + radius, y,
-        x + radius, y + radius, radius);  // quarter of circle to the right of the node circle
     context.lineTo(x + radius, y + w);
-    context.lineTo(x + w, y + h);
-    context.lineTo(x + e, y + h);
-    context.arcTo(x, y + h, x, y + h - e, e);
-    context.lineTo(x, y + e);
+    context.lineTo(x - radius, y + w);
+    context.lineTo(x - radius, y + radius);
+    context.arcTo(
+        x - radius, y,
+        x, y,
+        radius
+    );
 }
 
 
