@@ -77,4 +77,6 @@ sigma.canvas.hovers.square = function(node, context, settings) {
     text_renderer(node, context, settings);
 };
 
+sigma.canvas.hovers.square = get_canvas_hovers();
+
 

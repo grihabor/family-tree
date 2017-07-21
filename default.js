@@ -1,6 +1,6 @@
-function get_canvas_labels() {
 
-    function default_fill_text(context, node, prefix, size, fontSize) {
+// shared between labels and hovers
+function default_fill_text(context, node, prefix, size, fontSize) {
         context.fillText(
             node.label,
             Math.round(node[prefix + 'x'] + size + 3),
@@ -8,7 +8,7 @@ function get_canvas_labels() {
         );
     }
 
-    function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
+function centered_multiline_fill_text(context, node, prefix, size, fontSize) {
         var i,
             label_line,
             maxTextWidth = 0,
@@ -31,7 +31,10 @@ function get_canvas_labels() {
 
         node.labelWidth = maxTextWidth; // important for clicks
     }
-
+    
+    
+function get_canvas_labels() {
+    
     var fill_text = centered_multiline_fill_text;
 
     return function (node, context, settings) {
@@ -83,6 +86,9 @@ function get_canvas_nodes() {
 }
 
 function get_canvas_hovers() {
+    
+    var fill_text = centered_multiline_fill_text;
+    
     return function (node, context, settings) {
         var x,
             y,
@@ -165,11 +171,7 @@ function get_canvas_hovers() {
                 (node.color || settings('defaultNodeColor')) :
                 settings('defaultLabelHoverColor');
 
-            context.fillText(
-                node.label,
-                Math.round(node[prefix + 'x'] + size + 3),
-                Math.round(node[prefix + 'y'] + fontSize / 3)
-            );
+            fill_text(context, node, prefix, size, fontSize);
         }
     };
 }
