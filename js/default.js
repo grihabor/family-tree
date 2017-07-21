@@ -100,7 +100,7 @@ function centered_shadow(context, node, prefix, size, fontSize) {
         radius,
         rect = get_rect(context, node, prefix, size, fontSize);
 
-    diameter = fontSize + 4;
+    diameter = size * 1.6;
     radius = diameter / 2;
     x = node[prefix + 'x'];
     y = node[prefix + 'y'];
