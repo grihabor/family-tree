@@ -14,7 +14,7 @@ class Node(ABC):
 
 
     @abstractmethod
-    def steps(self) -> List[Tuple[int, int]]:
+    def steps(self):
         return []
 
     def __repr__(self):
