@@ -30,6 +30,8 @@ sigma.parsers.json(
 
         s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
+            n.target_x = n.x;
+            n.target_y = 1 - n.y;
         });
         s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
@@ -64,6 +66,15 @@ sigma.parsers.json(
             // call the refresh method to make the colors 
             // update effective. 
             s.refresh();
+
+            sigma.plugins.animate(
+                s,
+                {
+                    x: 'target_x',
+                    y: 'target_y'
+                },
+                2000
+            );
         });
 
         s.bind('clickStage', function (e) {
