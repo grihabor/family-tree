@@ -28,7 +28,8 @@ class Person(Node):
         
         super().__init__(
             data['id'],
-            color=COLOR_FEMALE_NODE if self.sex == 'female' else COLOR_FEMALE_NODE,
+            color=COLOR_FEMALE_NODE if self.sex == 'female' \
+                else COLOR_MALE_NODE,
             size=3
         )
 
