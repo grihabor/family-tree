@@ -1,6 +1,6 @@
 import logging
 
-from family.colors import COLOR_PERSON_NODE
+from family.colors import COLOR_FEMALE_NODE, COLOR_MALE_NODE
 from .node import Node
 
 logger = logging.getLogger(__name__)
@@ -9,12 +9,7 @@ logger = logging.getLogger(__name__)
 class Person(Node):
     def __init__(self, data: dict):
         assert 'id' in data
-        super().__init__(
-            data['id'],
-            color=COLOR_PERSON_NODE,
-            size=3
-        )
-
+        
         self.name = None
         self.surname = None
         self.prev_surname = None
@@ -30,6 +25,13 @@ class Person(Node):
                 setattr(self, attr_name, value)
             else:
                 logger.warning('Unexpected field {}={}'.format(attr_name, value))
+        
+        super().__init__(
+            data['id'],
+            color=COLOR_FEMALE_NODE if self.sex == 'female' else COLOR_FEMALE_NODE,
+            size=3
+        )
+
 
     def sex_step(self):
         return -1 if self.sex == 'male' else 1

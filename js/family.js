@@ -14,6 +14,21 @@ sigma.classes.graph.addMethod('neighbors', function (nodeId) {
     return neighbors;
 });
 
+
+
+function calculate_target_coords(node, centerNodeId, toKeep){
+    var coords = {};
+    coords.x = node.x;
+    coords.y = node.y;
+    return coords;
+}
+
+
+function get_label_threshold() {
+    return 12;
+}
+
+
 sigma.parsers.json(
     'data/graph.json', {
         renderers: [{
@@ -21,15 +36,19 @@ sigma.parsers.json(
             type: sigma.renderers.canvas
         }],
         settings: {
-            labelThreshold: 12
+            labelThreshold: get_label_threshold()
         }
     },
     function (s) {
+
+        var original_state = true;
         // We first need to save the original colors of our 
         // nodes and edges, like this: 
 
         s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
+            n.prev_x = n.x;
+            n.prev_y = n.y;
         });
         s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
@@ -44,13 +63,28 @@ sigma.parsers.json(
         // edges that have both extremities colored. 
 
         s.bind('clickNode', function (e) {
-            var nodeId = e.data.node.id,
+            var target,
+                nodeId = e.data.node.id,
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
             s.graph.nodes().forEach(function (n) {
-                if (toKeep[n.id])
+                var angle=Math.random() * 314,
+                    radius=5.,
+                    node=e.data.node;
+
+                if (toKeep[n.id]) {
                     n.color = n.originalColor;
-                else n.color = '#eee';
+
+                    target = calculate_target_coords(n, nodeId, toKeep);
+
+                    n.target_x = n.x;
+                    n.target_y = n.y;
+
+                } else {
+                    n.color = '#eee';
+                    n.target_x = node.x + radius * Math.cos(angle);
+                    n.target_y = node.y + radius * Math.sin(angle);
+                }
             });
 
             s.graph.edges().forEach(function (e) {
@@ -64,17 +98,42 @@ sigma.parsers.json(
             // call the refresh method to make the colors 
             // update effective. 
             s.refresh();
+
+
+            sigma.plugins.animate(
+                s,
+                {
+                    x: 'target_x',
+                    y: 'target_y'
+                },
+                2000
+            );
         });
 
         s.bind('clickStage', function (e) {
+
+            console.log(e);
+
+            original_state = 0;
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
+                n.target_y = n.prev_y;
+                n.target_x = n.prev_x;
             });
             s.graph.edges().forEach(function (e) {
                 e.color = e.originalColor;
             });
 
             s.refresh();
+
+            sigma.plugins.animate(
+                s,
+                {
+                    x: 'target_x',
+                    y: 'target_y'
+                },
+                2000
+            );
         });
     }
 );
