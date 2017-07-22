@@ -19,7 +19,7 @@ function get_label_size(context, node, size, fontSize) {
     label_size.width = maxTextWidth;
     label_size.line_height = fontSize * 1.2;
     label_size.height = label_lines.length * label_size.line_height;
-    label_size.height_offset = size * 2;
+    label_size.height_offset = fontSize * 1. + size * 1.;
     return label_size;
 }
 
