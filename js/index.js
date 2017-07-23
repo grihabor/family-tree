@@ -15,16 +15,50 @@ sigma.classes.graph.addMethod('neighbors', function (nodeId) {
 });
 
 
-function calculate_target_coords(node, centerNodeId, toKeep) {
-    var coords = {};
-    coords.x = node.x;
-    coords.y = node.y;
-    return coords;
+function assign_neighbours_target_coords(centerNodeId, toKeep) {
+    var i,
+        j,
+        y,
+        node,
+        center = {},
+        center_node = toKeep[centerNodeId],
+        local_layers = {},
+        local_layer;
+
+    for (i in toKeep){
+        node = toKeep[i];
+        y = center_node.y - node.y;
+        if (!local_layers[y]){
+            local_layers[y] = [];
+        }
+        local_layers[y].push(node);
+    }
+
+    function compare(a, b) {
+        if (a.x < b.x)
+            return -1;
+        if (a.x > b.x)
+            return 1;
+        return 0;
+    }
+
+    for (i in local_layers){
+        local_layer = local_layers[i];
+        local_layer.sort(compare);
+
+        for (j in local_layer){
+            node = local_layer[j];
+            node.target_x = center_node.x + parseInt(j);
+            node.target_y = center_node.y - parseInt(i);
+        }
+    }
+
+    console.log(local_layers);
 }
 
 
 function get_label_threshold() {
-    return 12;
+    return 10;
 }
 
 
@@ -66,6 +100,9 @@ sigma.parsers.json(
                 nodeId = e.data.node.id,
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
+
+            assign_neighbours_target_coords(nodeId, toKeep);
+
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
                     radius = 5.,
@@ -73,12 +110,6 @@ sigma.parsers.json(
 
                 if (toKeep[n.id]) {
                     n.color = n.originalColor;
-
-                    target = calculate_target_coords(n, nodeId, toKeep);
-
-                    n.target_x = n.x;
-                    n.target_y = n.y;
-
                 } else {
                     n.color = '#eee';
                     n.target_x = node.x + radius * Math.cos(angle);
@@ -104,6 +135,9 @@ sigma.parsers.json(
                 {
                     x: 'target_x',
                     y: 'target_y'
+                },
+                {
+                    duration: 1000
                 }
             );
         });
@@ -129,6 +163,9 @@ sigma.parsers.json(
                 {
                     x: 'target_x',
                     y: 'target_y'
+                },
+                {
+                    duration: 500
                 }
             );
         });
