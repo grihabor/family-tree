@@ -20,14 +20,14 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         j,
         y,
         node,
-        center = {},
+        center = {x: [], y: []},
         center_node = toKeep[centerNodeId],
         local_layers = {},
         local_layer;
 
     for (i in toKeep){
         node = toKeep[i];
-        y = center_node.y - node.y;
+        y = center_node.orig_y - node.orig_y;
         if (!local_layers[y]){
             local_layers[y] = [];
         }
@@ -35,9 +35,9 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
     }
 
     function compare(a, b) {
-        if (a.x < b.x)
+        if (a.orig_x < b.orig_x)
             return -1;
-        if (a.x > b.x)
+        if (a.orig_x > b.orig_x)
             return 1;
         return 0;
     }
@@ -48,17 +48,24 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 
         for (j in local_layer){
             node = local_layer[j];
-            node.target_x = center_node.x + parseInt(j);
-            node.target_y = center_node.y - parseInt(i);
+            node.target_x = center_node.orig_x + parseInt(j);
+            node.target_y = center_node.orig_y - parseInt(i);
+
+            center.x.push(node.target_x);
+            center.y.push(node.target_y);
         }
     }
 
-    console.log(local_layers);
+    var sum = function (s, v) {return s + v;};
+    center.x = center.x.reduce(sum) / center.x.length;
+    center.y = center.y.reduce(sum) / center.y.length;
+
+    return center;
 }
 
 
 function get_label_threshold() {
-    return 10;
+    return 8;
 }
 
 
@@ -74,14 +81,13 @@ sigma.parsers.json(
     },
     function (s) {
 
-        var original_state = true;
         // We first need to save the original colors of our 
         // nodes and edges, like this: 
 
         s.graph.nodes().forEach(function (n) {
             n.originalColor = n.color;
-            n.prev_x = n.x;
-            n.prev_y = n.y;
+            n.orig_x = n.x;
+            n.orig_y = n.y;
         });
         s.graph.edges().forEach(function (e) {
             e.originalColor = e.color;
@@ -98,10 +104,12 @@ sigma.parsers.json(
         s.bind('clickNode', function (e) {
             var target,
                 nodeId = e.data.node.id,
-                toKeep = s.graph.neighbors(nodeId);
+                toKeep = s.graph.neighbors(nodeId),
+                center;
+
             toKeep[nodeId] = e.data.node;
 
-            assign_neighbours_target_coords(nodeId, toKeep);
+            center = assign_neighbours_target_coords(nodeId, toKeep);
 
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
@@ -112,8 +120,8 @@ sigma.parsers.json(
                     n.color = n.originalColor;
                 } else {
                     n.color = '#eee';
-                    n.target_x = node.x + radius * Math.cos(angle);
-                    n.target_y = node.y + radius * Math.sin(angle);
+                    n.target_x = center.x + radius * Math.cos(angle);
+                    n.target_y = center.y + radius * Math.sin(angle);
                 }
             });
 
@@ -146,11 +154,10 @@ sigma.parsers.json(
 
             console.log(e);
 
-            original_state = 0;
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
-                n.target_y = n.prev_y;
-                n.target_x = n.prev_x;
+                n.target_y = n.orig_y;
+                n.target_x = n.orig_x;
             });
             s.graph.edges().forEach(function (e) {
                 e.color = e.originalColor;
