@@ -42,7 +42,8 @@ class Graph:
                 id='edge_{}'.format(edge_id),
                 source=src,
                 target=dst,
-                color=COLOR_PARENTS_EDGE if layer_step_y == 0 else COLOR_CHILDREN_EDGE
+                color=COLOR_PARENTS_EDGE if layer_step_y == 0 else COLOR_CHILDREN_EDGE,
+                size=100
             ))
 
         return Graph(graph)

@@ -115,7 +115,7 @@ sigma.parsers.json(
 
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
-                    radius = 5.,
+                    radius = 3.,
                     node = e.data.node;
 
                 if (toKeep[n.id]) {
@@ -155,6 +155,8 @@ sigma.parsers.json(
         s.bind('clickStage', function (e) {
 
             console.log(e);
+            console.log(e.data);
+            console.log(e.target);
 
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
