@@ -15,8 +15,7 @@ sigma.classes.graph.addMethod('neighbors', function (nodeId) {
 });
 
 
-
-function calculate_target_coords(node, centerNodeId, toKeep){
+function calculate_target_coords(node, centerNodeId, toKeep) {
     var coords = {};
     coords.x = node.x;
     coords.y = node.y;
@@ -68,9 +67,9 @@ sigma.parsers.json(
                 toKeep = s.graph.neighbors(nodeId);
             toKeep[nodeId] = e.data.node;
             s.graph.nodes().forEach(function (n) {
-                var angle=Math.random() * 314,
-                    radius=5.,
-                    node=e.data.node;
+                var angle = Math.random() * 314,
+                    radius = 5.,
+                    node = e.data.node;
 
                 if (toKeep[n.id]) {
                     n.color = n.originalColor;
@@ -105,8 +104,7 @@ sigma.parsers.json(
                 {
                     x: 'target_x',
                     y: 'target_y'
-                },
-                2000
+                }
             );
         });
 
@@ -131,8 +129,7 @@ sigma.parsers.json(
                 {
                     x: 'target_x',
                     y: 'target_y'
-                },
-                2000
+                }
             );
         });
     }

@@ -1,4 +1,5 @@
 import json
+import pickle
 import random
 from typing import Dict
 
@@ -210,6 +211,8 @@ def ordered_nodes(nodes_to_order, nodes):
 
     return ordered
 
+counter = 0
+
 
 def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
 
@@ -227,6 +230,10 @@ def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
         layer.by_coord[parent.x + move_direction] = parent.id
         parent.x += move_direction
 
+        global counter
+        with open('data/layers_{}.pkl'.format(counter), 'wb') as f:
+            pickle.dump(layers, f)
+        counter += 1
 
     def move_until(couple, parent, step):
         while True:
@@ -260,7 +267,7 @@ def ordered_layers(layers, nodes):
 
 
 class Data:
-    def __init__(self, filename):
+    def __init__(self, filename, layers_filename=None):
         with open(filename, 'r') as f:
             data = json.load(f)
 
@@ -269,12 +276,22 @@ class Data:
         self.nodes = {node.id: node for node in itertools.chain(
             self.persons.values(), self.couples.values()
         )}
-        layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
-        # layers = ordered_layers(layers, self.nodes)
-        apply_coords(self.nodes, layers)
-        # layers = ordered_layers(layers, self.nodes)
-        layers = guarantee_layers_nice_placement(self.nodes, layers)
-        # layers = shift_to_middle(self.nodes, layers)
+
+        if layers_filename is not None:
+            with open(layers_filename, 'rb') as f:
+                layers = pickle.load(f)
+                for y, layer in layers.items():
+                    for x, node_id in layer.by_coord.items():
+                        self.nodes[node_id].x = x
+                        self.nodes[node_id].y = y
+        else:
+            layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
+            # layers = ordered_layers(layers, self.nodes)
+            apply_coords(self.nodes, layers)
+            # layers = ordered_layers(layers, self.nodes)
+            layers = guarantee_layers_nice_placement(self.nodes, layers)
+            # layers = shift_to_middle(self.nodes, layers)
+
         self.layers = layers
 
     def walk(self):
