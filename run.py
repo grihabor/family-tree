@@ -1,10 +1,13 @@
 import json
 
+import itertools
+
 from family import Person
 from family.colors import COLOR_PARENTS_EDGE, COLOR_CHILDREN_EDGE
 from family.data import Data
 import os
 
+from family.graph import Graph
 from family.node import Node
 
 DIR_DATA = 'data'
@@ -21,38 +24,22 @@ class GraphNode:
 
 def main():
     data = Data(FILE_JSON)
-
-    graph = dict(
-        nodes=[],
-        edges=[],
-    )
-
-    layers_layout = False
-
-    for layer_id, node_list in data.layers.items():
-        for x, node_id in enumerate(node_list):
-            node = data.nodes[node_id]
-            graph['nodes'].append(dict(
-                id=node.id,
-                label=node.label,
-                type='square' if type(node) == Person else None,
-                x=x if layers_layout else node.x,
-                y=node.layer if layers_layout else node.y,
-                color=node.color,
-                size=node.size
-            ))
-
-    for edge_id, (src, dst, (layer_step_y, _)) in enumerate(data.walk()):
-        graph['edges'].append(dict(
-            id='edge_{}'.format(edge_id),
-            source=src,
-            target=dst,
-            color=COLOR_PARENTS_EDGE if layer_step_y == 0 else COLOR_CHILDREN_EDGE
-        ))
+    graph = Graph.create_from_data(data)
 
     with open(GRAPH_JSON, 'w') as f:
-        json.dump(graph, f)
+        json.dump(graph.graph, f)
 
+    for i in itertools.count(0):
+        filename = 'data/layers_{}.pkl'.format(i)
+        if not os.path.exists(filename):
+            break
+
+        data = Data(FILE_JSON, layers_filename=filename)
+
+        graph = Graph.create_from_data(data)
+
+        with open('data/graph_{}.json'.format(i), 'w') as f:
+            json.dump(graph.graph, f)
 
 if __name__ == '__main__':
     main()
