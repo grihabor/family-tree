@@ -25,10 +25,10 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         local_layers = {},
         local_layer;
 
-    for (i in toKeep){
+    for (i in toKeep) {
         node = toKeep[i];
         y = center_node.orig_y - node.orig_y;
-        if (!local_layers[y]){
+        if (!local_layers[y]) {
             local_layers[y] = [];
         }
         local_layers[y].push(node);
@@ -42,11 +42,11 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         return 0;
     }
 
-    for (i in local_layers){
+    for (i in local_layers) {
         local_layer = local_layers[i];
         local_layer.sort(compare);
 
-        for (j in local_layer){
+        for (j in local_layer) {
             node = local_layer[j];
             node.target_x = center_node.orig_x + parseInt(j);
             node.target_y = center_node.orig_y - parseInt(i);
@@ -56,7 +56,9 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         }
     }
 
-    var sum = function (s, v) {return s + v;};
+    var sum = function (s, v) {
+        return s + v;
+    };
     center.x = center.x.reduce(sum) / center.x.length;
     center.y = center.y.reduce(sum) / center.y.length;
 
