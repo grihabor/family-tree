@@ -34,7 +34,8 @@ class Graph:
                     x=x if layers_layout else node.x,
                     y=node.layer if layers_layout else node.y,
                     color=node.color,
-                    size=node.size
+                    size=node.size,
+                    class='other' if type(node) != Person else node.sex,
                 ))
 
         for edge_id, (src, dst, (layer_step_y, _)) in enumerate(data.walk()):
@@ -43,7 +44,8 @@ class Graph:
                 source=src,
                 target=dst,
                 color=COLOR_PARENTS_EDGE if layer_step_y == 0 else COLOR_CHILDREN_EDGE,
-                size=100
+                size=5,
+                class='parents' if layer_step_y == 0 else 'children',
             ))
 
         return Graph(graph)

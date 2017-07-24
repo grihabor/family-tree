@@ -78,7 +78,8 @@ sigma.parsers.json(
             type: sigma.renderers.canvas
         }],
         settings: {
-            labelThreshold: get_label_threshold()
+            labelThreshold: get_label_threshold(),
+            maxEdgeSize: 2
         }
     },
     function (s) {
@@ -90,9 +91,16 @@ sigma.parsers.json(
             n.originalColor = n.color;
             n.orig_x = n.x;
             n.orig_y = n.y;
+            
         });
         s.graph.edges().forEach(function (e) {
+            if (e.class === 'children') {
+                e.color = "rgb(200,200,200)";
+            }
+            
+            
             e.originalColor = e.color;
+            
         });
 
         // When a node is clicked, we check for each node 
