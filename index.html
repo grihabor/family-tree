@@ -16,76 +16,77 @@
     </title>
 
     <style type="text/css">
-        
+
         div#sigma-container {
             width: 100%;
             height: 80%;
         }
-        
+
         div#header {
             width: 100%;
             height: 20%;
         }
-        
+
         h1.center {
             text-align: center;
         }
-        
-        @media only screen and (max-device-width: 480px) { 
+
+        @media only screen and (max-device-width: 480px) {
             div#header {
                 font-size: 150%;
                 width: 100%;
                 height: 25%;
             }
+
             div#sigma-container {
                 width: 100%;
                 height: 75%;
             }
-            
+
         }
-        
-        @media only screen and (max-device-height: 480px) and (orientation: landscape) { 
-            
-            
+
+        @media only screen and (max-device-height: 480px) and (orientation: landscape) {
+
             div#header {
                 font-size: 100%;
                 width: 30%;
                 height: 100%;
                 float: left;
             }
+
             div#sigma-container {
                 width: 70%;
                 height: 100%;
                 float: right;
             }
         }
-        
-        
+
+
     </style>
 </head>
 
 <body>
 <div id="page-content">
-<div id="header">
-<div id="title">
-<h1 class="center">Семейное древо</h1>
-</div>
-<div id="description">
-<p>Это демо проекта визуализации семейного древа</p>
-</div>
+    <div id="header">
+        <div id="title">
+            <h1 class="center">Семейное древо</h1>
+        </div>
+        <div id="description">
+            <p>Это демо проекта визуализации семейного древа</p>
+        </div>
 
-<div id="interactions">
-<h2>Взаимодействие с деревом</h2>
-<ul>
-<li>приближение/отдаление камеры</li>
-<li>
-нажав на человека (вершину графа) 
-можно посмотреть ближайших родственников
-</li>
-</ul>
-</div>
-</div>
-<div id="sigma-container"></div>
+        <div id="interactions">
+            <h2>Взаимодействие с деревом</h2>
+            <ul>
+                <li>приближение/отдаление камеры</li>
+                <li>
+                    нажав на человека (вершину графа)
+                    можно посмотреть ближайших родственников
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="sigma-container"></div>
 </div>
 <script type='text/javascript' src="js/index.js"></script>
 
