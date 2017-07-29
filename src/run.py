@@ -2,25 +2,23 @@ import json
 
 import itertools
 
-from family import Person
-from family.colors import COLOR_PARENTS_EDGE, COLOR_CHILDREN_EDGE
+from family import DIR_DATA
 from family.data import Data
 import os
 
-from family.graph import Graph
+from src.family.graph import Graph
 from family.node import Node
 
-DIR_DATA = 'data'
 FILE_JSON = os.path.join(DIR_DATA, 'data.json')
-# FILE_TEMP = os.path.join(DIR_DATA, 'tmp.gefx')
-# FILE_GEFX = os.path.join(DIR_DATA, 'data.gefx')
 GRAPH_JSON = os.path.join(DIR_DATA, 'graph.json')
+
 
 class GraphNode:
     def __init__(self, node: Node):
         self.id = node.id
         self.type = str(type(node))
         self.label = node.label
+
 
 def main():
     data = Data(FILE_JSON)
