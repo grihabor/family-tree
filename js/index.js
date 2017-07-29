@@ -67,7 +67,7 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 
 
 function get_params() {
-    const mq = window.matchMedia( "(min-width: 480px)" );
+    const mq = window.matchMedia( "(max-width: 480px)" );
     var params = {
         label_threshold: 0
     };
@@ -76,7 +76,7 @@ function get_params() {
         params.label_threshold = 14;
     }
     else {
-        params.label_threshold = 10;
+        params.label_threshold = 8;
     }
     return params;
 }
