@@ -66,8 +66,19 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 }
 
 
-function get_label_threshold() {
-    return 8;
+function get_params() {
+    const mq = window.matchMedia( "(min-width: 480px)" );
+    var params = {
+        label_threshold: 0
+    };
+
+    if (mq.matches) {
+        params.label_threshold = 14;
+    }
+    else {
+        params.label_threshold = 10;
+    }
+    return params;
 }
 
 
@@ -78,8 +89,9 @@ sigma.parsers.json(
             type: sigma.renderers.canvas
         }],
         settings: {
-            labelThreshold: get_label_threshold(),
-            maxEdgeSize: 2
+            labelThreshold: get_params().label_threshold,
+            maxEdgeSize: 2,
+            labelSize: 'proportional'
         }
     },
     function (s) {
