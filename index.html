@@ -14,22 +14,32 @@
     <title>
         Family tree
     </title>
-
-    <style type="text/css">
-        #sigma-container {
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            position: absolute;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
 <body>
+<div id="page-content">
+    <div id="header">
+        <div id="title">
+            <h1 class="center">Семейное древо</h1>
+        </div>
+        <div id="description">
+            <p class="center">Это демо проекта визуализации семейного древа</p>
+        </div>
 
-<div id="sigma-container"></div>
-
+        <div id="interactions">
+            <h2>Взаимодействие с деревом</h2>
+            <ul>
+                <li>приближение/отдаление камеры</li>
+                <li>
+                    нажав на человека (вершину графа)
+                    можно посмотреть ближайших родственников
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div id="sigma-container"></div>
+</div>
 <script type='text/javascript' src="js/index.js"></script>
 
 </body>

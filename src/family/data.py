@@ -1,4 +1,5 @@
 import json
+import os
 import pickle
 import random
 from typing import Dict
@@ -9,6 +10,7 @@ from collections import defaultdict
 
 import logging
 
+from family import DIR_DATA
 from family.couple import Couple
 from family.node import Node
 from family.person import Person
@@ -231,7 +233,7 @@ def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
         parent.x += move_direction
 
         global counter
-        with open('data/layers_{}.pkl'.format(counter), 'wb') as f:
+        with open(os.path.join(DIR_DATA, 'layers_{}.pkl'.format(counter)), 'wb') as f:
             pickle.dump(layers, f)
         counter += 1
 
