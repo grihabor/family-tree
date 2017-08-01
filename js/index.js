@@ -66,6 +66,15 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 }
 
 
+function move_cameras(s, x, y) {
+    var i,
+        cam;
+    for (i in s.cameras) {
+        cam = s.cameras[i];
+        cam.goTo(x, y);
+    }
+}
+
 function get_params() {
     const mq = window.matchMedia( "only screen and (max-device-width: 480px)" );
     var params = {
@@ -105,10 +114,10 @@ sigma.parsers.json(
             
         });
         s.graph.edges().forEach(function (e) {
-            if (e.class === 'children') {
+            
+            if (e.class.indexOf('children') !== -1) {
                 e.color = "rgb(200,200,200)";
             }
-            
             
             e.originalColor = e.color;
             
@@ -169,6 +178,8 @@ sigma.parsers.json(
                     duration: 1000
                 }
             );
+            
+            move_cameras(s, center.x, center.y);
         });
 
         s.bind('clickStage', function (e) {
