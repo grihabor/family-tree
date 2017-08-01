@@ -108,7 +108,7 @@ function get_params() {
         labelThreshold: 8,
         maxEdgeSize: 2,
         labelSizeRatio: 1.,
-        labelSize: "proportional"
+        labelSize: "fixed"
     };
 
     if (mq.matches) {
@@ -151,6 +151,8 @@ sigma.parsers.json(
             e.originalColor = e.color;
             
         });
+        
+        s.refresh();
 
         // When a node is clicked, we check for each node 
         // if it is a neighbor of the clicked one. If not, 
@@ -172,7 +174,7 @@ sigma.parsers.json(
 
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
-                    radius = 1.5,
+                    radius = 2.,
                     node = e.data.node;
 
                 if (toKeep[n.id]) {
@@ -236,7 +238,10 @@ sigma.parsers.json(
                     y: 'target_y'
                 },
                 {
-                    duration: 500
+                    duration: 500,
+                    onComplete: function() {
+                        move_cameras(s, {x:0, ratio:1, y:0});
+                    }
                 }
             );
         });
