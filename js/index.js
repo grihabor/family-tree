@@ -23,7 +23,9 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         center = {x: [], y: []},
         center_node = toKeep[centerNodeId],
         local_layers = {},
-        local_layer;
+        local_layer,
+        scale = .5,
+        rect = {};
 
     for (i in toKeep) {
         node = toKeep[i];
@@ -48,35 +50,71 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 
         for (j in local_layer) {
             node = local_layer[j];
-            node.target_x = center_node.orig_x + parseInt(j);
-            node.target_y = center_node.orig_y - parseInt(i);
+            node.target_x = center_node.orig_x + parseInt(j) * scale;
+            node.target_y = center_node.orig_y - parseInt(i) * scale;
 
             center.x.push(node.target_x);
             center.y.push(node.target_y);
         }
     }
 
-    var sum = function (s, v) {
-        return s + v;
+    var max = function (s, v) {
+        if (s < v) {
+            return v;
+        } else {
+            return s;
+        }
     };
-    center.x = center.x.reduce(sum) / center.x.length;
-    center.y = center.y.reduce(sum) / center.y.length;
+    var min = function (s, v) {
+        if (s > v) {
+            return v;
+        } else {
+            return s;
+        }
+    };
+    
+    
+    rect.left = center.x.reduce(min);
+    rect.top = center.y.reduce(min);
+    rect.right = center.x.reduce(max);
+    rect.bottom = center.y.reduce(max);
 
+    center.x = rect.left + (rect.right - rect.left) / 2;
+    center.y = rect.top + (rect.bottom - rect.top) / 2;
     return center;
 }
 
+
+function move_cameras(s, coords) {
+    var i,
+        cam;
+        
+    coords.ratio = .7;
+    coords.angle = 0;
+    for (i in s.cameras) {
+        cam = s.cameras[i];
+        sigma.misc.animation.camera( 
+            cam, coords, 
+            {
+                duration: s.settings('animationsTime') || 300
+            } 
+        );
+    }
+}
 
 function get_params() {
     const mq = window.matchMedia( "only screen and (max-device-width: 480px)" );
     var params = {
         labelThreshold: 8,
         maxEdgeSize: 2,
-        labelSizeRatio: 1.4,
+        labelSizeRatio: 1.,
         labelSize: "proportional"
     };
 
     if (mq.matches) {
-        params.labelThreshold = 14;
+        params.maxNodeSize = 14;
+        params.labelThreshold = 16;
+        params.labelSizeRatio = 2.
     } 
     // alert(params.labelThreshold);
     // alert(window.innerWidth);
@@ -102,13 +140,13 @@ sigma.parsers.json(
             n.originalColor = n.color;
             n.orig_x = n.x;
             n.orig_y = n.y;
-            
+            //alert(n.x);
         });
         s.graph.edges().forEach(function (e) {
-            if (e.class === 'children') {
-                e.color = "rgb(200,200,200)";
-            }
             
+            if (e.class.indexOf('children') !== -1) {
+                e.color = "#ffdab9";
+            }
             
             e.originalColor = e.color;
             
@@ -134,7 +172,7 @@ sigma.parsers.json(
 
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
-                    radius = 3.,
+                    radius = 1.5,
                     node = e.data.node;
 
                 if (toKeep[n.id]) {
@@ -166,16 +204,19 @@ sigma.parsers.json(
                     y: 'target_y'
                 },
                 {
-                    duration: 1000
+                    duration: 1000,
+                    onComplete: function () {
+                        move_cameras(s, center);
+                    }
                 }
             );
         });
 
         s.bind('clickStage', function (e) {
 
-            console.log(e);
-            console.log(e.data);
-            console.log(e.target);
+            //console.log(e);
+            //console.log(e.data);
+            //console.log(e.target);
 
             s.graph.nodes().forEach(function (n) {
                 n.color = n.originalColor;
