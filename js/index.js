@@ -23,7 +23,8 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
         center = {x: [], y: []},
         center_node = toKeep[centerNodeId],
         local_layers = {},
-        local_layer;
+        local_layer,
+        scale = .5;
 
     for (i in toKeep) {
         node = toKeep[i];
@@ -48,8 +49,8 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 
         for (j in local_layer) {
             node = local_layer[j];
-            node.target_x = center_node.orig_x + parseInt(j);
-            node.target_y = center_node.orig_y - parseInt(i);
+            node.target_x = center_node.orig_x + parseInt(j) * scale;
+            node.target_y = center_node.orig_y - parseInt(i) * scale;
 
             center.x.push(node.target_x);
             center.y.push(node.target_y);
@@ -66,12 +67,20 @@ function assign_neighbours_target_coords(centerNodeId, toKeep) {
 }
 
 
-function move_cameras(s, x, y) {
+function move_cameras(s, coords) {
     var i,
         cam;
+        
+    coords.ratio = .5;
+    coords.angle = 0;
     for (i in s.cameras) {
         cam = s.cameras[i];
-        cam.goTo(x, y);
+        sigma.misc.animation.camera( 
+            cam, coords, 
+            {
+                duration: s.settings('animationsTime') || 300
+            } 
+        );
     }
 }
 
@@ -80,12 +89,13 @@ function get_params() {
     var params = {
         labelThreshold: 8,
         maxEdgeSize: 2,
-        labelSizeRatio: 1.4,
+        labelSizeRatio: 1,
         labelSize: "proportional"
     };
 
     if (mq.matches) {
-        params.labelThreshold = 14;
+        params.maxNodeSize = 16;
+        params.labelThreshold = 20;
     } 
     // alert(params.labelThreshold);
     // alert(window.innerWidth);
@@ -116,7 +126,7 @@ sigma.parsers.json(
         s.graph.edges().forEach(function (e) {
             
             if (e.class.indexOf('children') !== -1) {
-                e.color = "rgb(200,200,200)";
+                e.color = "#ffdab9";
             }
             
             e.originalColor = e.color;
@@ -143,7 +153,7 @@ sigma.parsers.json(
 
             s.graph.nodes().forEach(function (n) {
                 var angle = Math.random() * 314,
-                    radius = 3.,
+                    radius = 2.,
                     node = e.data.node;
 
                 if (toKeep[n.id]) {
@@ -175,11 +185,12 @@ sigma.parsers.json(
                     y: 'target_y'
                 },
                 {
-                    duration: 1000
+                    duration: 1000,
+                    onComplete: function () {
+                        move_cameras(s, center);
+                    }
                 }
             );
-            
-            move_cameras(s, center.x, center.y);
         });
 
         s.bind('clickStage', function (e) {
