@@ -107,14 +107,13 @@ function get_params() {
     var params = {
         labelThreshold: 8,
         maxEdgeSize: 2,
-        labelSizeRatio: 1.,
         labelSize: "fixed"
     };
 
     if (mq.matches) {
-        params.maxNodeSize = 14;
-        params.labelThreshold = 16;
-        params.labelSizeRatio = 2.
+        params.maxNodeSize = 16;
+        params.labelThreshold = 32;
+        params.defaultLabelSize = 30;
     } 
     // alert(params.labelThreshold);
     // alert(window.innerWidth);
@@ -137,6 +136,14 @@ sigma.parsers.json(
         // nodes and edges, like this: 
 
         s.graph.nodes().forEach(function (n) {
+            /*
+            var graphScale = 100;
+            
+            n.x *= graphScale;
+            n.y *= graphScale;
+            n.size *= graphScale;
+            */
+        
             n.originalColor = n.color;
             n.orig_x = n.x;
             n.orig_y = n.y;
@@ -151,7 +158,7 @@ sigma.parsers.json(
             e.originalColor = e.color;
             
         });
-        
+        // s.settings({autoRescale: false});
         s.refresh();
 
         // When a node is clicked, we check for each node 
@@ -179,10 +186,12 @@ sigma.parsers.json(
 
                 if (toKeep[n.id]) {
                     n.color = n.originalColor;
+                    n.forceDrawLabels = true;
                 } else {
                     n.color = '#eee';
                     n.target_x = center.x + radius * Math.cos(angle);
                     n.target_y = center.y + radius * Math.sin(angle);
+                    n.forceDrawLabels = false;
                 }
             });
 
@@ -224,6 +233,7 @@ sigma.parsers.json(
                 n.color = n.originalColor;
                 n.target_y = n.orig_y;
                 n.target_x = n.orig_x;
+                n.forceDrawLabels = false;
             });
             s.graph.edges().forEach(function (e) {
                 e.color = e.originalColor;
