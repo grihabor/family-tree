@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 import os
 import pickle
 import random
@@ -10,13 +11,14 @@ from collections import defaultdict
 
 import logging
 
-from family import DIR_DATA
 from family.couple import Couple
 from family.node import Node
 from family.person import Person
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+DIR_DATA = Path(__file__).parent.parent.parent / "data"
 
 
 class Layer(list):
@@ -151,12 +153,14 @@ def walk_nodes(nodes, *, start_node=None):
 
 def _layers_dict(nodes, *, start_node=None):
     layers = defaultdict(Layer)
-    for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(nodes, start_node=start_node):
+    for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(
+        nodes, start_node=start_node
+    ):
         node = nodes[node_id]
         next_node = nodes[next_node_id]
 
         if next_node.layer is not None:
-            raise RuntimeError('Layer for {} already set'.format(next_node))
+            raise RuntimeError("Layer for {} already set".format(next_node))
 
         if node.layer is None:
             """Initialize first node"""
@@ -169,8 +173,7 @@ def _layers_dict(nodes, *, start_node=None):
             layers[next_node_layer].append(next_node.id)
         else:
             layers[next_node_layer].insert(
-                len(layers[next_node_layer]) - 1,
-                next_node.id
+                len(layers[next_node_layer]) - 1, next_node.id
             )
 
     return layers
@@ -213,11 +216,11 @@ def ordered_nodes(nodes_to_order, nodes):
 
     return ordered
 
+
 counter = 0
 
 
 def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
-
     def move(parent: Node, move_direction: int):
         layer = layers[parent.layer]
 
@@ -233,7 +236,7 @@ def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
         parent.x += move_direction
 
         global counter
-        with open(os.path.join(DIR_DATA, 'layers_{}.pkl'.format(counter)), 'wb') as f:
+        with open(os.path.join(DIR_DATA, "layers_{}.pkl".format(counter)), "wb") as f:
             pickle.dump(layers, f)
         counter += 1
 
@@ -270,24 +273,27 @@ def ordered_layers(layers, nodes):
 
 class Data:
     def __init__(self, filename, layers_filename=None):
-        with open(filename, 'r') as f:
+        with open(filename, "r") as f:
             data = json.load(f)
 
         self.persons = _persons_dict(data)
         self.couples = _couples_dict(self.persons)
-        self.nodes = {node.id: node for node in itertools.chain(
-            self.persons.values(), self.couples.values()
-        )}
+        self.nodes = {
+            node.id: node
+            for node in itertools.chain(self.persons.values(), self.couples.values())
+        }
 
         if layers_filename is not None:
-            with open(layers_filename, 'rb') as f:
+            with open(layers_filename, "rb") as f:
                 layers = pickle.load(f)
                 for y, layer in layers.items():
                     for x, node_id in layer.by_coord.items():
                         self.nodes[node_id].x = x
                         self.nodes[node_id].y = y
         else:
-            layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
+            layers = _layers_dict(
+                self.nodes
+            )  # guarantee_layers_nice_placement(self.nodes)
             # layers = ordered_layers(layers, self.nodes)
             apply_coords(self.nodes, layers)
             # layers = ordered_layers(layers, self.nodes)

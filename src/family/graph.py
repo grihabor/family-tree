@@ -1,4 +1,4 @@
-from family import Person
+from family.person import Person
 from family.colors import COLOR_PARENTS_EDGE, COLOR_CHILDREN_EDGE
 
 

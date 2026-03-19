@@ -1,6 +1,6 @@
 from typing import List
 
-from family import Person
+from family.person import Person
 from family.colors import COLOR_COUPLE_NODE
 from .node import Node
 

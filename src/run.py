@@ -2,15 +2,14 @@ import json
 
 import itertools
 
-from family import DIR_DATA
-from family.data import Data
+from family.data import Data, DIR_DATA
 import os
 
-from src.family.graph import Graph
+from family.graph import Graph
 from family.node import Node
 
-FILE_JSON = os.path.join(DIR_DATA, 'data.json')
-GRAPH_JSON = os.path.join(DIR_DATA, 'graph.json')
+FILE_JSON = os.path.join(DIR_DATA, "data.json")
+GRAPH_JSON = os.path.join(DIR_DATA, "graph.json")
 
 
 class GraphNode:
@@ -24,11 +23,11 @@ def main():
     data = Data(FILE_JSON)
     graph = Graph.create_from_data(data)
 
-    with open(GRAPH_JSON, 'w') as f:
+    with open(GRAPH_JSON, "w") as f:
         json.dump(graph.graph, f)
 
     for i in itertools.count(0):
-        filename = 'data/layers_{}.pkl'.format(i)
+        filename = "data/layers_{}.pkl".format(i)
         if not os.path.exists(filename):
             break
 
@@ -36,8 +35,9 @@ def main():
 
         graph = Graph.create_from_data(data)
 
-        with open('data/graph_{}.json'.format(i), 'w') as f:
+        with open("data/graph_{}.json".format(i), "w") as f:
             json.dump(graph.graph, f)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
