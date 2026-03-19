@@ -30,7 +30,7 @@ class Person:
     sex: Literal["male", "female"]
     surname: str | None = None
     prev_surname: str | None = None
-    parents: tuple[int, int] | tuple[int] | None = None
+    parents: tuple[PersonId, PersonId] | tuple[PersonId] | None = None
     size: int = 3
     couple_id: Union["CoupleId", None] = None
     parent_couple_id: Union["CoupleId", None] = None
