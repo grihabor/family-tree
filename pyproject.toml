@@ -1,0 +1,10 @@
+[project]
+name = "family-tree"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "msgspec>=0.20.0",
+    "mypy>=1.19.1",
+]

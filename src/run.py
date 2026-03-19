@@ -1,3 +1,5 @@
+from family.person import Person
+from family.couple import Couple
 import json
 
 import itertools
@@ -13,7 +15,7 @@ GRAPH_JSON = os.path.join(DIR_DATA, "graph.json")
 
 
 class GraphNode:
-    def __init__(self, node: Node):
+    def __init__(self, node: Person | Couple):
         self.id = node.id
         self.type = str(type(node))
         self.label = node.label

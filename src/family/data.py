@@ -1,3 +1,5 @@
+from collections.abc import Iterator
+import msgspec
 import json
 from pathlib import Path
 import os
@@ -11,9 +13,9 @@ from collections import defaultdict
 
 import logging
 
-from family.couple import Couple
-from family.node import Node
-from family.person import Person
+from family.couple import Couple, CoupleId
+from family.node import Node, NodeId
+from family.person import Person, PersonId, RawPerson
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,10 +23,8 @@ logger.setLevel(logging.INFO)
 DIR_DATA = Path(__file__).parent.parent.parent / "data"
 
 
-class Layer(list):
-    def __init__(self, iterable=None):
-        self.by_coord = {}
-        super().__init__(iterable if iterable is not None else [])
+class Layer[T](list[T]):
+    by_coord: dict[int, CoupleId | PersonId] = {}
 
 
 def longest_layer_id(layers):
@@ -94,17 +94,17 @@ def apply_coords(nodes, layers: Dict[int, Layer]):
             set_node_x_coord(dst_node, src_node.x + layer_step[1], layer)
 
 
-def _persons_dict(data) -> Dict[int, Person]:
-    persons = {}
+def _persons_dict(data: list[dict]) -> Dict[PersonId, Person]:
+    persons: dict[PersonId, Person] = {}
 
     for obj in data:
-        person = Person(obj)
-        persons[person.id] = person
+        person = msgspec.convert(obj, type=RawPerson)
+        persons[person.id] = Person(**msgspec.structs.asdict(person))
     return persons
 
 
-def _couples_dict(persons) -> Dict[int, Couple]:
-    couples = {}
+def _couples_dict(persons) -> Dict[CoupleId, Couple]:
+    couples: dict[CoupleId, Couple] = {}
     for person in persons.values():
         if person.parents is None:
             continue
@@ -127,11 +127,13 @@ def _couples_dict(persons) -> Dict[int, Couple]:
     return couples
 
 
-def walk_nodes(nodes, *, start_node=None):
+def walk_nodes(
+    nodes: dict[NodeId, Node], *, start_node: Node | None = None
+) -> Iterator[tuple[NodeId, NodeId, tuple[int, int]]]:
     """DFS algorithm"""
 
     node = next(iter(nodes.values())) if start_node is None else start_node
-    path = [None]
+    path: list[None | NodeId] = [None]
     visited = {node.id}
 
     while True:
@@ -144,18 +146,16 @@ def walk_nodes(nodes, *, start_node=None):
                 yield node.id, next_node.id, layer_step
                 break
         if next_node is None:
-            next_node_id = path.pop()
-            if next_node_id is None:
+            next_node_id_ = path.pop()
+            if next_node_id_ is None:
                 break
-            next_node = nodes[next_node_id]
+            next_node = nodes[next_node_id_]
         node = next_node
 
 
-def _layers_dict(nodes, *, start_node=None):
-    layers = defaultdict(Layer)
-    for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(
-        nodes, start_node=start_node
-    ):
+def _layers_dict(nodes: dict[NodeId, Node], *, start_node: Node | None = None) -> dict[int, Layer]:
+    layers: defaultdict[int, Layer] = defaultdict(Layer)
+    for node_id, next_node_id, (layer_step_y, layer_step_x) in walk_nodes(nodes, start_node=start_node):
         node = nodes[node_id]
         next_node = nodes[next_node_id]
 
@@ -172,25 +172,18 @@ def _layers_dict(nodes, *, start_node=None):
         if layer_step_x >= 0:
             layers[next_node_layer].append(next_node.id)
         else:
-            layers[next_node_layer].insert(
-                len(layers[next_node_layer]) - 1, next_node.id
-            )
+            layers[next_node_layer].insert(len(layers[next_node_layer]) - 1, next_node.id)
 
     return layers
 
 
-def clear_nodes_layer(nodes):
-    for node in nodes.values():
-        node.layer = None
-
-
-def ordered_nodes(nodes_to_order, nodes):
+def ordered_nodes(nodes_to_order: list[NodeId], nodes):
     """Order node layer for better layout"""
-    groups = {}
-    ordered = Layer()
+    groups: dict[NodeId, CoupleId | list[PersonId]] = {}
+    ordered: Layer[NodeId] = Layer()
     for node_id in nodes_to_order:
         node = nodes[node_id]
-        if type(node) == Couple:
+        if isinstance(node, Couple):
             """groups[couple] -> parents"""
             groups[node.id] = node.parents
             """groups[parents] -> couple"""
@@ -222,8 +215,10 @@ counter = 0
 
 def guarantee_layers_nice_placement(nodes, layers: Dict[int, Layer]):
     def move(parent: Node, move_direction: int):
+        assert parent.layer
         layer = layers[parent.layer]
 
+        assert parent.x
         if parent.x + move_direction in layer.by_coord:
             temp_id = layer.by_coord[parent.x + move_direction]
             temp = nodes[temp_id]
@@ -272,28 +267,26 @@ def ordered_layers(layers, nodes):
 
 
 class Data:
-    def __init__(self, filename, layers_filename=None):
+    def __init__(self, filename: str, layers_filename: str | None = None) -> None:
         with open(filename, "r") as f:
             data = json.load(f)
 
-        self.persons = _persons_dict(data)
-        self.couples = _couples_dict(self.persons)
-        self.nodes = {
-            node.id: node
-            for node in itertools.chain(self.persons.values(), self.couples.values())
-        }
+        persons: dict[PersonId, Person] = _persons_dict(data)
+        self.persons = persons
+        couples: dict[CoupleId, Couple] = _couples_dict(self.persons)
+        self.couples = couples
+        nodes: Iterator[Person | Couple] = itertools.chain(persons.values(), couples.values())
+        self.nodes: dict[PersonId | CoupleId, Person | Couple] = {node.id: node for node in nodes}
 
         if layers_filename is not None:
             with open(layers_filename, "rb") as f:
-                layers = pickle.load(f)
+                layers: dict[int, Layer] = pickle.load(f)
                 for y, layer in layers.items():
                     for x, node_id in layer.by_coord.items():
                         self.nodes[node_id].x = x
                         self.nodes[node_id].y = y
         else:
-            layers = _layers_dict(
-                self.nodes
-            )  # guarantee_layers_nice_placement(self.nodes)
+            layers = _layers_dict(self.nodes)  # guarantee_layers_nice_placement(self.nodes)
             # layers = ordered_layers(layers, self.nodes)
             apply_coords(self.nodes, layers)
             # layers = ordered_layers(layers, self.nodes)
