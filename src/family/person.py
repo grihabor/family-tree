@@ -20,7 +20,7 @@ class RawPerson(msgspec.Struct):
     name: str | None = None
     surname: str | None = None
     prev_surname: str | None = None
-    parents: list[int] | None = None
+    parents: list[PersonId] | None = None
 
 
 @dataclass
